@@ -9,10 +9,16 @@ const NavBar = () => {
           <Link to="/signup" style={styles.navbarLink}>Sign Up</Link>
         </li>
         <li style={styles.navbarItem}>
-          <Link to="/habit" style={styles.navbarLink}>Habits</Link>
+          <Link to="/habits" style={styles.navbarLink}>Habits</Link>
         </li>
         <li style={styles.navbarItem}>
           <Link to="/goals" style={styles.navbarLink}>Goals</Link>
+        </li>
+        <li style={styles.navbarItem}>
+          <Link to="/inspirations" style={styles.navbarLink}>Inspirations</Link>
+        </li>
+        <li style={styles.navbarItem}>
+          <Link to="/" style={styles.navbarLink}>Todos</Link>
         </li>
         <li style={{...styles.navbarItem, ...styles.searchItem}}>
           <input type="text" placeholder="Search" style={styles.searchInput} />

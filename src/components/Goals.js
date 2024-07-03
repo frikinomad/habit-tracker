@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { getFirestore, collection, addDoc, getDocs , deleteDoc, doc } from 'firebase/firestore';
-
+import Spinner from './Spinner';
 
 const GoalTracker = () => {
   const [goals, setGoals] = useState([]);
   const [newGoal, setNewGoal] = useState('');
+  const [isLoading, setIsLoading] = useState(true); // New loading state
 
   const db = getFirestore();
 
@@ -13,7 +14,9 @@ const GoalTracker = () => {
     const goalsSnapshot = await getDocs(goalsCollection);
     const goalsData = goalsSnapshot.docs.map((doc) => doc.data());
     setGoals(goalsData);
+    setIsLoading(false); // Set loading state to false after fetching data
   };
+
   useEffect(() => {
     fetchGoals();
   }, []);
@@ -37,9 +40,13 @@ const GoalTracker = () => {
 
   return (
     <div>
-      {goals.map((goal) => (
-        <div key={goal.id}> {goal.goal}</div>
-      ))}
+      {isLoading ? (
+        <Spinner/>
+      ) : (
+        goals.map((goal) => (
+          <div key={goal.id}> {goal.goal}</div>
+        ))
+      )}
       <input
         type="text"
         value={newGoal}
