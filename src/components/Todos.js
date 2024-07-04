@@ -35,7 +35,7 @@ const Todos = () => {
     }, [selectedDate]); // Fetch habits whenever the selected date changes
 
     return (
-      <div>
+      <div style={styles.container}>
         <DatePicker
           selected={selectedDate}
           onChange={(date) => {
@@ -47,10 +47,10 @@ const Todos = () => {
         {loading ? <Spinner /> : (
           habits.map(habit => {
             return (
-              <div key={habit.id} className="card" style={styles.item}>
+              <div key={habit.id} className="card" style={{ ...styles.habitItem, ...habit.style }}>
                 <h3 style={habit.completed ? styles.textChecked : styles.textUnchecked}>{habit.name}</h3>
                 <p style={habit.completed ? styles.textChecked : styles.textUnchecked}>{habit.daysOfWeek}</p>
-                <input type="checkbox" checked={habit.completed} style={styles.checkbox} />
+                <input type="checkbox" checked={habit.completed} style={styles.checkbox} readOnly />
               </div>
             );
           })
@@ -60,10 +60,66 @@ const Todos = () => {
 };
 
 const styles = {
-  item: {
+  container: {
+    padding: '20px',
+  },
+  habitItem: {
+    margin: '10px 0',
+    padding: '10px',
+    border: '1px solid #ccc',
+    borderRadius: '5px',
+  },
+  editButton: {
+    margin: '5px',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    border: 'none',
+    padding: '5px 10px',
+    cursor: 'pointer',
+  },
+  deleteButton: {
+    margin: '5px',
+    backgroundColor: '#f44336',
+    color: 'white',
+    border: 'none',
+    padding: '5px 10px',
+    cursor: 'pointer',
+  },
+  form: {
+    margin: '20px 0',
+  },
+  input: {
+    width: '100%',
+    padding: '10px',
+    marginBottom: '10px',
+    border: '1px solid #ccc',
+    borderRadius: '5px',
+  },
+  checkboxGroup: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '10px',
+  },
+  checkboxLabel: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: '10px',
+  },
+  addButton: {
+    padding: '10px 20px',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+  },
+  cancelButton: {
+    padding: '10px 20px',
+    backgroundColor: '#f44336',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    marginLeft: '10px',
   },
   checkbox: {
     marginRight: '10px',
