@@ -1,31 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { getFirestore, collection, addDoc, query, getDocs, deleteDoc, doc, updateDoc} from 'firebase/firestore';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import Spinner from './Spinner';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { format } from 'date-fns';
 
-  
 const Todos = () => {
     const [habits, setHabits] = useState([]);
-    // const [habit, setHabit] = useState('');
     const [loading, setLoading] = useState(true);
-    const [daysOfWeek, setDaysOfWeek] = useState({
-        Monday: false,
-        Tuesday: false,
-        Wednesday: false,
-        Thursday: false,
-        Friday: false,
-        Saturday: false,
-        Sunday: false,
-    });
-    const [selectedHabit, setSelectedHabit] = useState(null);
-    const [isEditMode, setIsEditMode] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(new Date());
     const db = getFirestore();
 
-    const fetchHabits = async () => {
+    const fetchHabits = async (date) => {
         const habitsCollection = collection(db, 'habits');
         const habitsSnapshot = await getDocs(habitsCollection);
         const habitsList = habitsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-        const filteredHabits = habitsList.filter(habit => habit.daysOfWeek.includes(today));
+        const dayOfWeek = format(date, 'EEEE'); // Get day of the week in full name
+        const filteredHabits = habitsList.filter(habit => habit.daysOfWeek.includes(dayOfWeek));
         setHabits(filteredHabits.map(habit => {
           return {
             ...habit,
@@ -39,11 +30,20 @@ const Todos = () => {
         setLoading(false);
     };
 
-  useEffect(() => {
-    fetchHabits();
-  }, []); // Fetch habits on initial render
+    useEffect(() => {
+        fetchHabits(selectedDate);
+    }, [selectedDate]); // Fetch habits whenever the selected date changes
+
     return (
       <div>
+        <DatePicker
+          selected={selectedDate}
+          onChange={(date) => {
+            setLoading(true);
+            setSelectedDate(date);
+          }}
+          inline
+        />
         {loading ? <Spinner /> : (
           habits.map(habit => {
             return (
@@ -76,4 +76,5 @@ const styles = {
     color: 'black',
   },
 };
+
 export default Todos;

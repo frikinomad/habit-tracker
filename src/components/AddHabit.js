@@ -101,7 +101,6 @@ const AddHabit = () => {
     <Spinner />
   ) : (
     <div style={styles.container}>
-      <h1>Habit Tracker</h1>
       {habits.map((habit) => (
         <div key={habit.id} style={styles.habitItem}>
           <div>{habit.name}</div>
