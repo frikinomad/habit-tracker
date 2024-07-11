@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getFirestore, collection, addDoc, query, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, getDocs, deleteDoc, doc, updateDoc} from 'firebase/firestore';
 import Spinner from './Spinner';
 
 const getInitialDaysOfWeek = () => ({
@@ -19,12 +19,12 @@ const AddHabit = () => {
   const [selectedHabit, setSelectedHabit] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [habits, setHabits] = useState([]);
-  const [showForm, setShowForm] = useState(false);
   const db = getFirestore();
 
   useEffect(() => {
     fetchHabits();
   }, []);
+
 
   const fetchHabits = async () => {
     try {
@@ -77,7 +77,6 @@ const AddHabit = () => {
     );
     setSelectedHabit(habit);
     setIsEditMode(true);
-    setShowForm(true);
   };
 
   const handleDeleteHabit = async (habitId) => {
@@ -101,7 +100,6 @@ const AddHabit = () => {
     setDaysOfWeek(getInitialDaysOfWeek());
     setSelectedHabit(null);
     setIsEditMode(false);
-    setShowForm(false);
   };
 
   return loading ? (
@@ -110,51 +108,37 @@ const AddHabit = () => {
     <div style={styles.container}>
       {habits.map((habit) => (
         <div key={habit.id} style={styles.habitItem}>
-          <div>
-            {isEditMode && selectedHabit && selectedHabit.id === habit.id ? (
-              <input
-                type="text"
-                value={habit}
-                onChange={(e) => setHabit(e.target.value)}
-                style={styles.input}
-              />
-            ) : (
-              habit.name
-            )}
-          </div>
+          <div>{habit.name}</div>
           <div>Days: {habit.daysOfWeek.map((day) => day.slice(0, 3)).join(', ')}</div>
           <button onClick={() => handleEditHabit(habit)} style={styles.editButton}>Edit</button>
           <button onClick={() => handleDeleteHabit(habit.id)} style={styles.deleteButton}>Delete</button>
         </div>
       ))}
-      <button onClick={() => setShowForm(true)} style={styles.addButton}>Add Habit</button>
-      {showForm && (
-        <form onSubmit={handleAddOrUpdateHabit} style={styles.form}>
-          <input
-            type="text"
-            value={habit}
-            onChange={(e) => setHabit(e.target.value)}
-            placeholder={isEditMode ? 'Edit Habit' : 'New Habit'}
-            style={styles.input}
-          />
-          <div style={styles.checkboxGroup}>
-            {Object.keys(daysOfWeek).map((day) => (
-              <label key={day} style={styles.checkboxLabel}>
-                <input
-                  type="checkbox"
-                  checked={daysOfWeek[day]}
-                  onChange={() => handleDayChange(day)}
-                />
-                {day.slice(0, 3)}
-              </label>
-            ))}
-          </div>
-          <button type="submit" style={styles.addButton} disabled={habit.trim() === '' || !Object.values(daysOfWeek).some((day) => day)}>
-            {isEditMode ? 'Save' : 'Add Habit'}
-          </button>
-          <button onClick={resetForm} style={styles.cancelButton}>Cancel</button>
-        </form>
-      )}
+      <form onSubmit={handleAddOrUpdateHabit} style={styles.form}>
+        <input
+          type="text"
+          value={habit}
+          onChange={(e) => setHabit(e.target.value)}
+          placeholder={isEditMode ? 'Edit Habit' : 'New Habit'}
+          style={styles.input}
+        />
+        <div style={styles.checkboxGroup}>
+          {Object.keys(daysOfWeek).map((day) => (
+            <label key={day} style={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={daysOfWeek[day]}
+                onChange={() => handleDayChange(day)}
+              />
+              {day.slice(0, 3)}
+            </label>
+          ))}
+        </div>
+        <button type="submit" style={styles.addButton} disabled={habit.trim() === '' || !Object.values(daysOfWeek).some((day) => day)}>
+          {isEditMode ? 'Save' : 'Add Habit'}
+        </button>
+        {isEditMode && <button onClick={resetForm} style={styles.cancelButton}>Cancel</button>}
+      </form>
     </div>
   );
 };
