@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 
 import React from 'react';
@@ -9,7 +8,6 @@ import GoalsPage from './pages/GoalsPage';
 import InspirationPage from './pages/InspirationsPage';
 import TodosPage from './pages/TodosPage';
 
-// src/App.js
 import NavBar from './components/NavBar';
 
 const App = () => {

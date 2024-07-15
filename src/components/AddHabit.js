@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getFirestore, collection, addDoc, query, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import Spinner from './Spinner';
 
@@ -22,11 +22,7 @@ const AddHabit = () => {
   const [showForm, setShowForm] = useState(false);
   const db = getFirestore();
 
-  useEffect(() => {
-    fetchHabits();
-  }, []);
-
-  const fetchHabits = async () => {
+  const fetchHabits = useCallback(async () => {
     try {
       const habitsCollection = collection(db, 'habits');
       const habitsSnapshot = await getDocs(habitsCollection);
@@ -36,8 +32,12 @@ const AddHabit = () => {
     } catch (error) {
       console.error('Error fetching habits:', error);
     }
-  };
-
+  }, [habits])
+  
+  useEffect(() => {
+    fetchHabits();
+  }, [habit, daysOfWeek, selectedHabit]);
+  
   const handleAddOrUpdateHabit = async (e) => {
     e.preventDefault();
     const selectedDays = Object.keys(daysOfWeek).filter((day) => daysOfWeek[day]);
@@ -122,7 +122,7 @@ const AddHabit = () => {
           <button onClick={() => handleDeleteHabit(habit.id)} style={styles.deleteButton}>Delete</button>
         </div>
       ))}
-      <button onClick={() => setShowForm(true)} style={styles.addButton}>Add Habit</button>
+      <button onClick={() => setShowForm((prev) => (!prev))} style={styles.addButton}>Add Habit</button>
       {showForm && (
         <form onSubmit={handleAddOrUpdateHabit} style={styles.form}>
           <input
