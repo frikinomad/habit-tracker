@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 import Spinner from './Spinner';
 import DatePicker from 'react-datepicker';
@@ -11,7 +11,7 @@ const Todos = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const db = getFirestore();
 
-  const fetchHabits = useCallback( async (date) => {
+  const fetchHabits = async (date) => {
       const habitsCollection = collection(db, 'habits');
       const habitsSnapshot = await getDocs(habitsCollection);
       const habitsList = habitsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -27,14 +27,13 @@ const Todos = () => {
         };
       }));
       setLoading(false);
-  });
+  };
 
   useEffect(() => {
       fetchHabits(selectedDate);
-  }, [selectedDate, habits]); // Fetch habits whenever the selected date changes
-
+  }, [selectedDate]); // Fetch habits whenever the selected date changes
   return (
-    <div style={styles.container}>
+    <div className="container mx-auto p-4">
       <DatePicker
         selected={selectedDate}
         onChange={(date) => {
@@ -42,94 +41,35 @@ const Todos = () => {
           setSelectedDate(date);
         }}
         inline
+        className="mb-4"
       />
-      {loading ? <Spinner /> : (
-        habits.map(habit => {
-          return (
-            <div key={habit.id} className="card" style={{ ...styles.habitItem, ...habit.style }}>
-              <h3 style={habit.completed ? styles.textChecked : styles.textUnchecked}>{habit.name}</h3>
-              <p style={habit.completed ? styles.textChecked : styles.textUnchecked}>{habit.daysOfWeek}</p>
-              <input type="checkbox" checked={habit.completed} style={styles.checkbox} readOnly />
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {habits.map((habit) => (
+            <div key={habit.id} className={`bg-white shadow-md rounded-lg p-4 mb-4 ${habit.style}`}>
+              <h3 className={habit.completed ? "text-green-500 line-through" : "text-gray-800"}>
+                {habit.name}
+              </h3>
+              <div className="mt-4 flex justify-center space-x-2">
+                {habit.daysOfWeek.map((day, index) => (
+                  <div
+                    key={index}
+                    className="h-8 w-8 flex items-center justify-center bg-gray-200 rounded-full"
+                  >
+                    {day.slice(0, 1).toUpperCase()}
+                  </div>
+                ))}
+              </div>
+              <input type="checkbox" checked={habit.completed} className="form-checkbox h-5 w-5 mt-4" readOnly />
             </div>
-          );
-        })
+          ))}
+        </div>
       )}
     </div>
-  );
-};
+  );  
+};  
 
-const styles = {
-  container: {
-    padding: '20px',
-  },
-  habitItem: {
-    margin: '10px 0',
-    padding: '10px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-  },
-  editButton: {
-    margin: '5px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    padding: '5px 10px',
-    cursor: 'pointer',
-  },
-  deleteButton: {
-    margin: '5px',
-    backgroundColor: '#f44336',
-    color: 'white',
-    border: 'none',
-    padding: '5px 10px',
-    cursor: 'pointer',
-  },
-  form: {
-    margin: '20px 0',
-  },
-  input: {
-    width: '100%',
-    padding: '10px',
-    marginBottom: '10px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-  },
-  checkboxGroup: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: '10px',
-  },
-  checkboxLabel: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  addButton: {
-    padding: '10px 20px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
-  cancelButton: {
-    padding: '10px 20px',
-    backgroundColor: '#f44336',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    marginLeft: '10px',
-  },
-  checkbox: {
-    marginRight: '10px',
-  },
-  textChecked: {
-    textDecoration: 'line-through',
-    color: 'grey',
-  },
-  textUnchecked: {
-    color: 'black',
-  },
-};
 
 export default Todos;

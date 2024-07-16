@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getFirestore, collection, addDoc, query, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import Spinner from './Spinner';
 
@@ -22,7 +22,7 @@ const AddHabit = () => {
   const [showForm, setShowForm] = useState(false);
   const db = getFirestore();
 
-  const fetchHabits = useCallback(async () => {
+  const fetchHabits = async () => {
     try {
       const habitsCollection = collection(db, 'habits');
       const habitsSnapshot = await getDocs(habitsCollection);
@@ -32,11 +32,11 @@ const AddHabit = () => {
     } catch (error) {
       console.error('Error fetching habits:', error);
     }
-  }, [habits])
+  }
   
   useEffect(() => {
     fetchHabits();
-  }, [habit, daysOfWeek, selectedHabit]);
+  }, [habit]);
   
   const handleAddOrUpdateHabit = async (e) => {
     e.preventDefault();
@@ -102,120 +102,102 @@ const AddHabit = () => {
   return loading ? (
     <Spinner />
   ) : (
-    <div style={styles.container}>
-      {habits.map((habit) => (
-        <div key={habit.id} style={styles.habitItem}>
-          <div>
-            {isEditMode && selectedHabit && selectedHabit.id === habit.id ? (
-              <input
-                type="text"
-                value={habit}
-                onChange={(e) => setHabit(e.target.value)}
-                style={styles.input}
-              />
-            ) : (
-              habit.name
-            )}
+    <div className="container mx-auto p-4">
+      <h1 className="font-bold text-lg text-center">Habits</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {habits.map((habit) => (
+          <div key={habit.id} className="bg-white shadow-md rounded-lg p-4 mb-4">
+            <div className="flex justify-between items-center">
+              <div>
+                {isEditMode && selectedHabit && selectedHabit.id === habit.id ? (
+                  <input
+                    type="text"
+                    value={habit.name}
+                    onChange={(e) => setHabit(e.target.value)}
+                    className="border border-gray-300 rounded-lg p-2 w-full"
+                  />
+                ) : (
+                  <span className="font-bold text-lg">{habit.name}</span>
+                )}
+              </div>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handleEditHabit(habit)}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteHabit(habit.id)}
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+            <div className="mt-4 flex justify-center space-x-2">
+              {habit.daysOfWeek.map((day, index) => (
+                <div
+                  key={index}
+                  className="h-8 w-8 flex items-center justify-center bg-gray-200 rounded-full"
+                >
+                  {day.slice(0, 1).toUpperCase()}
+                </div>
+              ))}
+            </div>
           </div>
-          <div>Days: {habit.daysOfWeek.map((day) => day.slice(0, 3)).join(', ')}</div>
-          <button onClick={() => handleEditHabit(habit)} style={styles.editButton}>Edit</button>
-          <button onClick={() => handleDeleteHabit(habit.id)} style={styles.deleteButton}>Delete</button>
-        </div>
-      ))}
-      <button onClick={() => setShowForm((prev) => (!prev))} style={styles.addButton}>Add Habit</button>
+        ))}
+      </div>
+      <button
+        onClick={() => setShowForm((prev) => !prev)}
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4"
+      >
+        Add Habit
+      </button>
       {showForm && (
-        <form onSubmit={handleAddOrUpdateHabit} style={styles.form}>
+        <form onSubmit={handleAddOrUpdateHabit} className="mt-4 bg-white shadow-md rounded-lg p-4">
           <input
             type="text"
             value={habit}
             onChange={(e) => setHabit(e.target.value)}
             placeholder={isEditMode ? 'Edit Habit' : 'New Habit'}
-            style={styles.input}
+            className="border border-gray-300 rounded-lg p-2 w-full mb-4"
           />
-          <div style={styles.checkboxGroup}>
+          <div className="grid grid-cols-2 gap-4 mb-4">
             {Object.keys(daysOfWeek).map((day) => (
-              <label key={day} style={styles.checkboxLabel}>
+              <label key={day} className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   checked={daysOfWeek[day]}
                   onChange={() => handleDayChange(day)}
+                  className="form-checkbox h-5 w-5"
                 />
-                {day.slice(0, 3)}
+                <span>{day.slice(0, 3)}</span>
               </label>
             ))}
           </div>
-          <button type="submit" style={styles.addButton} disabled={habit.trim() === '' || !Object.values(daysOfWeek).some((day) => day)}>
-            {isEditMode ? 'Save' : 'Add Habit'}
-          </button>
-          <button onClick={resetForm} style={styles.cancelButton}>Cancel</button>
+          <div className="flex space-x-4">
+            <button
+              type="submit"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+              disabled={habit.trim() === '' || !Object.values(daysOfWeek).some((day) => day)}
+            >
+              {isEditMode ? 'Save' : 'Add Habit'}
+            </button>
+            <button
+              onClick={resetForm}
+              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Cancel
+            </button>
+          </div>
         </form>
       )}
     </div>
   );
+  
 };
 
-const styles = {
-  container: {
-    padding: '20px',
-  },
-  habitItem: {
-    margin: '10px 0',
-    padding: '10px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-  },
-  editButton: {
-    margin: '5px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    padding: '5px 10px',
-    cursor: 'pointer',
-  },
-  deleteButton: {
-    margin: '5px',
-    backgroundColor: '#f44336',
-    color: 'white',
-    border: 'none',
-    padding: '5px 10px',
-    cursor: 'pointer',
-  },
-  form: {
-    margin: '20px 0',
-  },
-  input: {
-    width: '100%',
-    padding: '10px',
-    marginBottom: '10px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-  },
-  checkboxGroup: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: '10px',
-  },
-  checkboxLabel: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  addButton: {
-    padding: '10px 20px',
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
-  cancelButton: {
-    padding: '10px 20px',
-    backgroundColor: '#f44336',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    marginLeft: '10px',
-  },
-};
+
 
 export default AddHabit;
