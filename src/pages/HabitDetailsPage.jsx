@@ -1,10 +1,10 @@
 import React from 'react';
 import HabitDetails from '../components/HabitDetails';
 
-function HabitDetailsPage() {
+function HabitDetailsPage(id) {
     return (
         <div>
-            <HabitDetails />
+            <HabitDetails id={id} />
         </div>
     );
 }

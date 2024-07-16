@@ -111,7 +111,7 @@ const AddHabit = () => {
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {habits.map((habit) => (
-          <div key={habit.id} onClick={() => handleHabitClick(habit.id)} className="bg-white shadow-md rounded-lg p-4 mb-4">
+          <div key={habit.id} className="bg-white shadow-md rounded-lg p-4 mb-4">
             <div className="flex justify-between items-center">
               <div>
                 {isEditMode && selectedHabit && selectedHabit.id === habit.id ? (
@@ -122,7 +122,7 @@ const AddHabit = () => {
                     className="border border-gray-300 rounded-lg p-2 w-full"
                   />
                 ) : (
-                  <span className="font-bold text-lg">{habit.name}</span>
+                  <span className="font-bold text-lg" onClick={() => handleHabitClick(habit.id)}>{habit.name}</span>
                 )}
               </div>
               <div className="flex space-x-2">
