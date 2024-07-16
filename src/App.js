@@ -6,6 +6,7 @@ import SignUpPage from './pages/SignUpPage';
 import HabitPage from './pages/HabitPage';
 import GoalsPage from './pages/GoalsPage';
 import TodosPage from './pages/TodosPage';
+import HabitDetailsPage from './pages/HabitDetailsPage';
 
 import NavBar from './components/NavBar';
 
@@ -15,7 +16,8 @@ const App = () => {
       <NavBar />
       <Routes>
         <Route path="/" element={<TodosPage />} /> 
-        <Route path="/habits" element={<HabitPage />} /> 
+        <Route path="/habits" element={<HabitPage />} />
+        <Route path="/habits/:id" element={<HabitDetailsPage />} /> 
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/goals" element={<GoalsPage />} />
         <Route path="*" element={<Navigate to="/" />} />

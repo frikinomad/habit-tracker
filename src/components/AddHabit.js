@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getFirestore, collection, addDoc, query, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import Spinner from './Spinner';
 
@@ -21,6 +22,7 @@ const AddHabit = () => {
   const [habits, setHabits] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const db = getFirestore();
+  const navigate = useNavigate();
 
   const fetchHabits = async () => {
     try {
@@ -99,14 +101,17 @@ const AddHabit = () => {
     setShowForm(false);
   };
 
+  const handleHabitClick = (id) => {
+    navigate(`/habits/${id}`);
+  };
+
   return loading ? (
     <Spinner />
   ) : (
     <div className="container mx-auto p-4">
-      <h1 className="font-bold text-lg text-center">Habits</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {habits.map((habit) => (
-          <div key={habit.id} className="bg-white shadow-md rounded-lg p-4 mb-4">
+          <div key={habit.id} onClick={() => handleHabitClick(habit.id)} className="bg-white shadow-md rounded-lg p-4 mb-4">
             <div className="flex justify-between items-center">
               <div>
                 {isEditMode && selectedHabit && selectedHabit.id === habit.id ? (
