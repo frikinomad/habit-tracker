@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getFirestore, collection, addDoc, query, getDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 import Spinner from './Spinner';
 
 const getInitialDaysOfWeek = () => ({
@@ -15,68 +15,53 @@ const getInitialDaysOfWeek = () => ({
 
 const HabitDetails = () => {
   const { id } = useParams();
-  
-  const [habit, setHabit] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [habit, setHabit] = useState({});
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [daysOfWeek, setDaysOfWeek] = useState(getInitialDaysOfWeek());
-  const [selectedHabit, setSelectedHabit] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [showForm, setShowForm] = useState(false);
   const db = getFirestore();
 
-
   const fetchHabit = async () => {
-    try{
+    setLoading(true);
+    try {
       const habitDocRef = doc(db, 'habits', id);
       const habitDoc = await getDoc(habitDocRef);
       if (habitDoc.exists()) {
         setHabit({ id: habitDoc.id, ...habitDoc.data() });
-        console.log(habit);
+        setDaysOfWeek(
+          Object.keys(getInitialDaysOfWeek()).reduce((acc, day) => {
+            acc[day] = habitDoc.data().daysOfWeek.includes(day);
+            return acc;
+          }, {})
+        );
       } else {
         setError('Habit not found');
       }
       setLoading(false);
-    }catch(error){
-      console.log(error);
-    }
-  }
-
-  const handleAddOrUpdateHabit = async (e) => {
-    e.preventDefault();
-    const selectedDays = Object.keys(daysOfWeek).filter((day) => daysOfWeek[day]);
-    try {
-      if (isEditMode && selectedHabit) {
-        const habitRef = doc(db, 'habits', selectedHabit.id);
-        await updateDoc(habitRef, {
-          name: habit,
-          daysOfWeek: selectedDays,
-        });
-      } else {
-        await addDoc(collection(db, 'habits'), {
-          name: habit,
-          daysOfWeek: selectedDays,
-          createdAt: new Date(),
-        });
-      }
-      resetForm();
-      fetchHabit();
     } catch (error) {
-      console.error('Error saving habit:', error);
+      console.error(error);
+      setError('Error fetching habit');
+      setLoading(false);
     }
   };
 
-  const handleEditHabit = (habit) => {
-    setHabit(habit.name);
-    setDaysOfWeek(
-      Object.keys(daysOfWeek).reduce((acc, day) => {
-        acc[day] = habit.daysOfWeek.includes(day);
-        return acc;
-      }, {})
-    );
-    setSelectedHabit(habit);
-    setIsEditMode(true);
-    setShowForm(true);
+  const handleSaveHabit = async () => {
+    const selectedDays = Object.keys(daysOfWeek).filter((day) => daysOfWeek[day]);
+    try {
+      const habitRef = doc(db, 'habits', habit.id);
+      await updateDoc(habitRef, {
+        name: habit.name,
+        daysOfWeek: selectedDays,
+        reason: habit.reason,
+        motivation: habit.motivation,
+        opportunityCost: habit.opportunityCost,
+        whyPause: habit.whyPause,
+      });
+      setIsEditMode(false);
+    } catch (error) {
+      console.error('Error saving habit:', error);
+    }
   };
 
   const handleDeleteHabit = async (habitId) => {
@@ -88,6 +73,14 @@ const HabitDetails = () => {
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setHabit((prevHabit) => ({
+      ...prevHabit,
+      [name]: value,
+    }));
+  };
+
   const handleDayChange = (day) => {
     setDaysOfWeek((prevDays) => ({
       ...prevDays,
@@ -95,106 +88,81 @@ const HabitDetails = () => {
     }));
   };
 
-  const resetForm = () => {
-    setHabit('');
-    setDaysOfWeek(getInitialDaysOfWeek());
-    setSelectedHabit(null);
-    setIsEditMode(false);
-    setShowForm(false);
-  };
-
   useEffect(() => {
     fetchHabit();
-  }, [id])
-
-
+  }, [id]);
 
   return loading ? (
     <Spinner />
-  ) :  (
+  ) : (
     <div className="container mx-auto p-4">
       <div className="bg-white shadow-md rounded-lg p-4 mb-4 text-center">
-        <h3 className="text-gray-800 font-bold text-lg">{habit.name}</h3>
+        {isEditMode ? (
+          <input
+            type="text"
+            name="name"
+            value={habit.name}
+            onChange={handleInputChange}
+            className="border border-gray-300 rounded-lg p-2 w-full mb-4"
+          />
+        ) : (
+          <h3 className="text-gray-800 font-bold text-lg">{habit.name}</h3>
+        )}
         <div className="mt-4 flex justify-center space-x-2">
-        {habit.daysOfWeek.map((day) => (
-          console.log(day)
-        ))}
+          {habit.daysOfWeek && Object.keys(daysOfWeek).map((day, index) => (
+            <div
+              key={index}
+              className={`h-8 w-8 flex items-center justify-center rounded-full ${
+                daysOfWeek[day] ? 'bg-green-500 text-white' : 'bg-gray-200'
+              }`}
+              onClick={() => handleDayChange(day)}
+            >
+              {day.slice(0, 1).toUpperCase()}
+            </div>
+          ))}
         </div>
         <div className="flex justify-center space-x-2 mt-4">
           <button
-            onClick={() => handleEditHabit(habit)}
+            onClick={() => setIsEditMode(!isEditMode)}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            Edit
+            {isEditMode ? 'Cancel' : 'Edit'}
           </button>
           <button
-            onClick={() => handleDeleteHabit(habit.id)}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Delete
-          </button>
+                  onClick={() => handleDeleteHabit(habit.id)}
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                >
+                  Delete
+                </button>
+          {isEditMode && (
+            <button
+              onClick={handleSaveHabit}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Save
+            </button>
+          )}
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-        <div className="bg-white shadow-md rounded-lg p-4">
-          <h4 className="text-gray-800 font-bold text-lg">Reason</h4>
-          <p className="text-gray-600 mt-2">{habit.reason}</p>
-        </div>
-        <div className="bg-white shadow-md rounded-lg p-4">
-          <h4 className="text-gray-800 font-bold text-lg">Motivation</h4>
-          <p className="text-gray-600 mt-2">{habit.motivation}</p>
-        </div>
-        <div className="bg-white shadow-md rounded-lg p-4">
-          <h4 className="text-gray-800 font-bold text-lg">Opportunity Cost</h4>
-          <p className="text-gray-600 mt-2">{habit.opportunityCost}</p>
-        </div>
-        <div className="bg-white shadow-md rounded-lg p-4">
-          <h4 className="text-gray-800 font-bold text-lg">Why Pause This Habit</h4>
-          <p className="text-gray-600 mt-2">{habit.whyPause}</p>
-        </div>
+        {['reason', 'motivation', 'opportunityCost', 'whyPause'].map((field) => (
+          <div key={field} className="bg-white shadow-md rounded-lg p-4">
+            <h4 className="text-gray-800 font-bold text-lg capitalize">{field}</h4>
+            {isEditMode ? (
+              <textarea
+                name={field}
+                value={habit[field] || ''}
+                onChange={handleInputChange}
+                className="border border-gray-300 rounded-lg p-2 w-full mt-2"
+              />
+            ) : (
+              <p className="text-gray-600 mt-2">{habit[field]}</p>
+            )}
+          </div>
+        ))}
       </div>
-      {showForm && (
-        <form onSubmit={handleAddOrUpdateHabit} className="mt-4 bg-white shadow-md rounded-lg p-4">
-          <input
-            type="text"
-            value={habit}
-            onChange={(e) => setHabit(e.target.value)}
-            placeholder={isEditMode ? 'Edit Habit' : 'New Habit'}
-            className="border border-gray-300 rounded-lg p-2 w-full mb-4"
-          />
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            {Object.keys(daysOfWeek).map((day) => (
-              <label key={day} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  checked={daysOfWeek[day]}
-                  onChange={() => handleDayChange(day)}
-                  className="form-checkbox h-5 w-5"
-                />
-                <span>{day.slice(0, 3)}</span>
-              </label>
-            ))}
-          </div>
-          <div className="flex space-x-4">
-            <button
-              type="submit"
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-              disabled={habit.trim() === '' || !Object.values(daysOfWeek).some((day) => day)}
-            >
-              {isEditMode ? 'Save' : 'Add Habit'}
-            </button>
-            <button
-              onClick={resetForm}
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      )}
     </div>
   );
-
 };
 
 export default HabitDetails;
