@@ -141,6 +141,7 @@ const AddHabit = () => {
               </div>
             </div>
             <div className="mt-4 flex justify-center space-x-2">
+              
               {habit.daysOfWeek.map((day, index) => (
                 <div
                   key={index}

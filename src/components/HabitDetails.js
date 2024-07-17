@@ -116,7 +116,9 @@ const HabitDetails = () => {
       <div className="bg-white shadow-md rounded-lg p-4 mb-4 text-center">
         <h3 className="text-gray-800 font-bold text-lg">{habit.name}</h3>
         <div className="mt-4 flex justify-center space-x-2">
-          {habit.daysOfWeek}
+        {habit.daysOfWeek.map((day) => (
+          console.log(day)
+        ))}
         </div>
         <div className="flex justify-center space-x-2 mt-4">
           <button

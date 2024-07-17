@@ -13,6 +13,7 @@
 
 # configuration files
 ./firebase.js
+./index.js
 
 # misc
 .DS_Store

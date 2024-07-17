@@ -10,7 +10,7 @@ const Todos = () => {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const db = getFirestore();
-
+  
   const fetchHabits = async (date) => {
       const habitsCollection = collection(db, 'habits');
       const habitsSnapshot = await getDocs(habitsCollection);
