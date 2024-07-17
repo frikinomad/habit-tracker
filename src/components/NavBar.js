@@ -21,13 +21,16 @@ const NavBar = () => {
           />
         </li>
         <li>
-          <Link to="/" className={getLinkClass('/')}>Today</Link>
+          <Link to="/" className={getLinkClass('/')}>My Profile</Link>
         </li>
         <li>
           <Link to="/habits" className={getLinkClass('/habits')}>Habits</Link>
         </li>
         <li>
           <Link to="/goals" className={getLinkClass('/goals')}>Goals</Link>
+        </li>
+        <li>
+          <Link to="/today" className={getLinkClass('/today')}>Today</Link>
         </li>
         <li>
           <Link to="/signup" className={getLinkClass('/signup')}>Sign Up</Link>

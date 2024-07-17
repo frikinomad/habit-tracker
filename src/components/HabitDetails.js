@@ -151,7 +151,7 @@ const HabitDetails = () => {
             {isEditMode ? (
               <textarea
                 name={field}
-                value={habit[field] || ''}
+                value={habit[field] || ' '}
                 onChange={handleInputChange}
                 className="border border-gray-300 rounded-lg p-2 w-full mt-2"
               />

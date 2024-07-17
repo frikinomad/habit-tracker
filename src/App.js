@@ -7,6 +7,7 @@ import HabitPage from './pages/HabitPage';
 import GoalsPage from './pages/GoalsPage';
 import TodosPage from './pages/TodosPage';
 import HabitDetailsPage from './pages/HabitDetailsPage';
+import DashboardPage from './pages/DashboardPage';
 
 import NavBar from './components/NavBar';
 
@@ -15,7 +16,8 @@ const App = () => {
     <Router>
       <NavBar />
       <Routes>
-        <Route path="/" element={<TodosPage />} /> 
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/today" element={<TodosPage />} /> 
         <Route path="/habits" element={<HabitPage />} />
         <Route path="/habits/:id" element={<HabitDetailsPage />} /> 
         <Route path="/signup" element={<SignUpPage />} />
