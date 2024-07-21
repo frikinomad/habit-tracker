@@ -16,7 +16,7 @@ export default (state, action) => {
 				...state,
 				isAuthenticated: true,
 				loading: false,
-				user: action.payload,
+				userData: action.payload, // Set userData instead of user
 			};
 
 		case REGISTER_SUCCESS:
@@ -27,18 +27,19 @@ export default (state, action) => {
 				...action.payload,
 				isAuthenticated: true,
 				loading: false,
+				userData: action.payload, // Set userData instead of user
 			};
 		case REGISTER_FAIL:
 		case AUTH_ERROR:
 		case LOGIN_FAIL:
 		case LOGOUT:
-			localStorage.removeItem('token');
+			// localStorage.removeItem('token');
 			return {
 				...state,
 				token: null,
 				isAuthenticated: false,
 				loading: false,
-				user: null,
+				userData: null, // Set userData to null
 				error: action.payload,
 			};
 		case CLEAR_ERRORS:

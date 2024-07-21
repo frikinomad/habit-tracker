@@ -37,15 +37,19 @@ const AuthState = (props) => {
 		error: null,
 	};
 	const [state, dispatch] = useReducer(authReducer, initialState);
-
+	
 	// Load User
-	const loadUser = async (user) => {
+	const loadUser = async (user = null) => {
+		// Get the currently signed-in user if no user is passed
+		console.log(auth.currentUser);
+		user = user || auth.currentUser;
+
 		if (user) {
 			try {
 				// Fetch additional user data from Firestore if needed
 				const userDoc = await getDoc(doc(db, 'users', user.uid));
 				const userData = userDoc.exists() ? userDoc.data() : {};
-
+				console.log(userData);
 				dispatch({
 					type: USER_LOADED,
 					payload: { ...userData, uid: user.uid, email: user.email },
@@ -58,6 +62,7 @@ const AuthState = (props) => {
 			dispatch({ type: AUTH_ERROR });
 		}
 	};
+
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -77,7 +82,11 @@ const AuthState = (props) => {
 	const register = async (formData) => {
 		const { email, password, name } = formData;
 		try {
-			const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+			const userCredential = await createUserWithEmailAndPassword(
+				auth,
+				email,
+				password
+			);
 			const user = userCredential.user;
 
 			await setDoc(doc(db, 'users', user.uid), {
@@ -98,14 +107,21 @@ const AuthState = (props) => {
 	const login = async (formData) => {
 		const { email, password } = formData;
 		try {
-			const userCredential = await signInWithEmailAndPassword(auth, email, password);
+			const userCredential = await signInWithEmailAndPassword(
+				auth,
+				email,
+				password
+			);
 			const user = userCredential.user;
 
 			// Fetch additional user data from Firestore if needed
 			const userDoc = await getDoc(doc(db, 'users', user.uid));
 			const userData = userDoc.exists() ? userDoc.data() : {};
 
-			dispatch({ type: LOGIN_SUCCESS, payload: { ...userData, uid: user.uid, email: user.email } });
+			dispatch({
+				type: LOGIN_SUCCESS,
+				payload: { ...userData, uid: user.uid, email: user.email },
+			});
 			loadUser(user);
 		} catch (error) {
 			dispatch({ type: LOGIN_FAIL, payload: error.message });
