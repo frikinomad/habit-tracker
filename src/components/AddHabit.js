@@ -52,10 +52,17 @@ const AddHabit = () => {
         });
       } else {
         await addDoc(collection(db, 'habits'), {
-          name: habit,
-          daysOfWeek: selectedDays,
-          createdAt: new Date(),
-        });
+					name: habit,
+					daysOfWeek: selectedDays,
+					createdAt: new Date(),
+					history: {
+						[new Date().toISOString().split('T')[0]]: {
+							actionPerformed: 'didNotAttempt',
+						},
+					},
+					baseXp: 10,
+					multiplier: 1,
+				});
       }
       resetForm();
       fetchHabits();
