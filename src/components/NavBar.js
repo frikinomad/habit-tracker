@@ -38,7 +38,7 @@ const NavBar = () => {
 				</li>
 				<li>
 					<Link to='/' className={getLinkClass('/')}>
-						My Profile
+						Today
 					</Link>
 				</li>
 				<li>
@@ -52,8 +52,8 @@ const NavBar = () => {
 					</Link>
 				</li>
 				<li>
-					<Link to='/today' className={getLinkClass('/today')}>
-						Today
+					<Link to='/dashboard' className={getLinkClass('/dashboard')}>
+						Profile
 					</Link>
 				</li>
 				<li className='text-white hover:text-gray-300'>
