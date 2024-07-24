@@ -35,9 +35,10 @@ const AuthState = (props) => {
 		userData: null,
 		loading: true,
 		error: null,
+		uid: null,
 	};
 	const [state, dispatch] = useReducer(authReducer, initialState);
-	
+
 	// Load User
 	const loadUser = async (user = null) => {
 		// Get the currently signed-in user if no user is passed
@@ -63,14 +64,11 @@ const AuthState = (props) => {
 		}
 	};
 
-
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
 			if (user) {
-				// User is signed in, load user data
 				loadUser(user);
 			} else {
-				// User is signed out
 				dispatch({ type: AUTH_ERROR });
 			}
 		});
@@ -96,7 +94,10 @@ const AuthState = (props) => {
 				habits: [],
 			});
 
-			dispatch({ type: REGISTER_SUCCESS, payload: user });
+			dispatch({
+				type: REGISTER_SUCCESS,
+				payload: { uid: user.uid, email: user.email },
+			});
 			loadUser(user);
 		} catch (error) {
 			dispatch({ type: REGISTER_FAIL, payload: error.message });
@@ -113,7 +114,7 @@ const AuthState = (props) => {
 				password
 			);
 			const user = userCredential.user;
-
+			
 			// Fetch additional user data from Firestore if needed
 			const userDoc = await getDoc(doc(db, 'users', user.uid));
 			const userData = userDoc.exists() ? userDoc.data() : {};
@@ -147,6 +148,7 @@ const AuthState = (props) => {
 				loading: state.loading,
 				userData: state.userData,
 				error: state.error,
+				uid: state.uid,
 				loadUser,
 				register,
 				login,

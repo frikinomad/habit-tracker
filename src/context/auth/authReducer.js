@@ -16,19 +16,21 @@ export default (state, action) => {
 				...state,
 				isAuthenticated: true,
 				loading: false,
-				userData: action.payload, // Set userData instead of user
+				userData: action.payload,
+				uid: action.payload.uid,
 			};
 
 		case REGISTER_SUCCESS:
 		case LOGIN_SUCCESS:
-			localStorage.setItem('token', action.payload.token);
+			// localStorage.setItem('token', action.payload.token || ''); // Handle token if available
 			return {
 				...state,
-				...action.payload,
 				isAuthenticated: true,
 				loading: false,
-				userData: action.payload, // Set userData instead of user
+				userData: action.payload,
+				uid: action.payload.uid,
 			};
+
 		case REGISTER_FAIL:
 		case AUTH_ERROR:
 		case LOGIN_FAIL:
@@ -39,9 +41,11 @@ export default (state, action) => {
 				token: null,
 				isAuthenticated: false,
 				loading: false,
-				userData: null, // Set userData to null
+				userData: null,
+				uid: null,
 				error: action.payload,
 			};
+
 		case CLEAR_ERRORS:
 			return {
 				...state,
