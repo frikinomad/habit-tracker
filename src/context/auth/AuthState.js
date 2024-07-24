@@ -92,6 +92,7 @@ const AuthState = (props) => {
 				email,
 				createdAt: new Date(),
 				habits: [],
+				xp: 0
 			});
 
 			dispatch({

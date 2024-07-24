@@ -23,13 +23,43 @@ const Todos = () => {
 	const { uid } = authContext;
 	const db = getFirestore();
 
+
+	const updateUserXp = async (userId, habitData, isCompleted) => {
+		const resultXp = habitData.baseXp * habitData.multiplier;
+
+		try {
+			const userDocRef = doc(db, 'users', userId);
+			const userDocSnap = await getDoc(userDocRef);
+
+			if (userDocSnap.exists()) {
+				const userData = userDocSnap.data();
+				const currentXp = userData.xp || 0;
+				const newXp = isCompleted ? currentXp + resultXp : currentXp - resultXp;
+
+				await updateDoc(userDocRef, {
+					xp: newXp,
+				});
+				console.log(`xp : ${newXp}`);
+				console.log(`User's XP updated successfully. New XP: ${newXp}`);
+			} else {
+				console.log('User document does not exist');
+			}
+		} catch (error) {
+			console.error('Error updating user XP:', error);
+		}
+	};
 	// Function to update habit history in Firestore and local state
 	const updateHabitHistory = async (habitId, isCompleted) => {
 		try {
+			
 			const habitRef = doc(db, 'habits', habitId);
+			const habitDoc = await getDoc(habitRef);
+			const habitData = habitDoc.data();
+
 			const today = format(selectedDate, 'yyyy-MM-dd');
 			const action = isCompleted ? 'finished' : 'didNotAttempt';
 
+			updateUserXp(uid, habitData, isCompleted);
 			// Update the history for the selected date in Firestore
 			await updateDoc(habitRef, {
 				[`history.${today}`]: { actionPerformed: action },
