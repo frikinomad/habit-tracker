@@ -1,7 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -18,8 +16,20 @@ const firebaseConfig = {
 };
 
 
+// Your web app's Firebase configuration
+// TEMP - switch to above
+// const firebaseConfig = {
+//   apiKey: "AIzaSyCwMv_5mLAZqLXxu0N00uNdFVdXM9iDIA8",
+//   authDomain: "habit-tracker-nishant.firebaseapp.com",
+//   projectId: "habit-tracker-nishant",
+//   storageBucket: "habit-tracker-nishant.appspot.com",
+//   messagingSenderId: "247907335362",
+//   appId: "1:247907335362:web:84f9a3ec37089b7510cf5b"
+// };
+
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-export { auth, db };
+export { firebaseConfig, auth, db };

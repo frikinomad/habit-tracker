@@ -4,10 +4,7 @@ import AddHabit from '../components/AddHabit';
 
 const HabitPage = () => {
   return (
-    <div>
-      <h1>Habits </h1>
-      <AddHabit />
-    </div>
+    <AddHabit />
   );
 };
 

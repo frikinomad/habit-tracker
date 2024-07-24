@@ -1,57 +1,112 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { Fragment, useContext, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import AuthContext from '../context/auth/authContext';
 
 const NavBar = () => {
-  return (
-    <nav style={styles.navbar}>
-      <ul style={styles.navbarList}>
-        <li style={styles.navbarItem}>
-          <Link to="/signup" style={styles.navbarLink}>Sign Up</Link>
-        </li>
-        <li style={styles.navbarItem}>
-          <Link to="/habit" style={styles.navbarLink}>Habits</Link>
-        </li>
-        <li style={styles.navbarItem}>
-          <Link to="/goals" style={styles.navbarLink}>Goals</Link>
-        </li>
-        <li style={{...styles.navbarItem, ...styles.searchItem}}>
-          <input type="text" placeholder="Search" style={styles.searchInput} />
-        </li>
-      </ul>
-    </nav>
-  );
-};
+	const location = useLocation();
+	const navigate = useNavigate(); // Initialize useNavigate
+	const authContext = useContext(AuthContext);
+	const { isAuthenticated, logout, userData, loadUser } = authContext;
 
-const styles = {
-  navbar: {
-    backgroundColor: '#333',
-    padding: '10px',
-  },
-  navbarList: {
-    display: 'flex',
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  navbarItem: {
-    margin: '0 10px',
-  },
-  navbarLink: {
-    color: '#fff',
-    textDecoration: 'none',
-  },
-  searchItem: {
-    marginLeft: 'auto',
-  },
-  searchInput: {
-    padding: '6px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    backgroundColor: '#fff',
-    color: '#333',
-  },
+	const getLinkClass = (path) => {
+		return location.pathname === path
+			? 'text-gray-800 bg-white p-2 rounded'
+			: 'text-white hover:text-gray-300';
+	};
+
+	useEffect(() => {
+		loadUser();
+		console.log('userData');
+		console.log(userData);
+		// eslint-disable-next-line
+	}, []); // Add userData as dependency
+
+	const onLogout = async () => {
+		await logout(); // Ensure logout completes before navigating
+		navigate('/login');
+	};
+
+	const authLinks = (
+		<Fragment>
+			<ul className='flex justify-around items-center space-x-4'>
+				<li className='flex items-center'>
+					<input
+						type='text'
+						placeholder='Search'
+						className='p-2 rounded-lg border border-gray-300'
+					/>
+				</li>
+				<li>
+					<Link to='/' className={getLinkClass('/')}>
+						Today
+					</Link>
+				</li>
+				<li>
+					<Link to='/habits' className={getLinkClass('/habits')}>
+						Habits
+					</Link>
+				</li>
+				<li>
+					<Link to='/goals' className={getLinkClass('/goals')}>
+						Goals
+					</Link>
+				</li>
+				<li>
+					<Link to='/dashboard' className={getLinkClass('/dashboard')}>
+						Profile
+					</Link>
+				</li>
+				<li className='text-white hover:text-gray-300'>
+					Hello {userData && userData.name}
+				</li>
+				<li>
+					<a
+						onClick={onLogout}
+						href='#!'
+						className='text-white hover:text-gray-300 cursor-pointer flex items-center'
+					>
+						<i className='fas fa-sign-out-alt mr-2'></i>
+						<span className='hide-sm'>Logout</span>
+					</a>
+				</li>
+			</ul>
+		</Fragment>
+	);
+
+	const guestLinks = (
+		<Fragment>
+			<ul className='flex justify-around items-center space-x-4'>
+				<li>
+					<Link to='/signup' className={getLinkClass('/signup')}>
+						Register
+					</Link>
+				</li>
+				<li>
+					<Link to='/login' className={getLinkClass('/login')}>
+						Login
+					</Link>
+				</li>
+			</ul>
+		</Fragment>
+	);
+
+	return (
+		<nav className='bg-gray-800 p-4 shadow-md'>
+			<div className='container mx-auto flex justify-between items-center'>
+				<h1>
+					<Link
+						to='/'
+						className='text-white text-lg font-semibold hover:text-gray-400'
+					>
+						Home
+					</Link>
+				</h1>
+				<ul className='flex space-x-4'>
+					{isAuthenticated ? authLinks : guestLinks}
+				</ul>
+			</div>
+		</nav>
+	);
 };
 
 export default NavBar;
