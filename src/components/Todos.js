@@ -1,20 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
 	getFirestore,
 	collection,
+	query,
 	getDocs,
+	getDoc,
 	doc,
 	updateDoc,
+	where,
 } from 'firebase/firestore';
 import Spinner from './Spinner';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
+import AuthContext from '../context/auth/authContext';
 
 const Todos = () => {
+	const authContext = useContext(AuthContext);
 	const [habits, setHabits] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [selectedDate, setSelectedDate] = useState(new Date());
+	const { uid } = authContext;
 	const db = getFirestore();
 
 	// Function to update habit history in Firestore and local state
@@ -63,8 +69,21 @@ const Todos = () => {
 
 	const fetchHabits = async (date) => {
 		setLoading(true);
+		const userDocRef = doc(db, 'users', uid);
+		const userDocSnapshot = await getDoc(userDocRef);
+
+		const userData = userDocSnapshot.data();
+		const habitsArray = userData.habits || [];
+
+		if (habitsArray.length === 0) {
+			setHabits([]);
+			setLoading(false);
+			return;
+		}
 		const habitsCollection = collection(db, 'habits');
-		const habitsSnapshot = await getDocs(habitsCollection);
+		const q = query(habitsCollection, where('__name__', 'in', habitsArray));
+		const habitsSnapshot = await getDocs(q);
+
 		const habitsList = habitsSnapshot.docs.map((doc) => ({
 			id: doc.id,
 			...doc.data(),
