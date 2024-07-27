@@ -7,25 +7,13 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyApMZMT1dd-kEK2LcFQgz3rdAco4I3MFwU",
-  authDomain: "habit-tracker-8203c.firebaseapp.com",
-  projectId: "habit-tracker-8203c",
-  storageBucket: "habit-tracker-8203c.appspot.com",
-  messagingSenderId: "721732873471",
-  appId: "1:721732873471:web:d76b97bdb02bbaeaaef0ca"
+	apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+	authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+	projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+	storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+	messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+	appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
-
-
-// Your web app's Firebase configuration
-// TEMP - switch to above
-// const firebaseConfig = {
-//   apiKey: "AIzaSyCwMv_5mLAZqLXxu0N00uNdFVdXM9iDIA8",
-//   authDomain: "habit-tracker-nishant.firebaseapp.com",
-//   projectId: "habit-tracker-nishant",
-//   storageBucket: "habit-tracker-nishant.appspot.com",
-//   messagingSenderId: "247907335362",
-//   appId: "1:247907335362:web:84f9a3ec37089b7510cf5b"
-// };
 
 
 const app = initializeApp(firebaseConfig);
