@@ -12,26 +12,29 @@ import {
 	doc,
 	updateDoc,
 	arrayUnion,
-  arrayRemove
+	arrayRemove,
 } from 'firebase/firestore';
 import Spinner from './Spinner';
 import AuthContext from '../context/auth/authContext';
+import AlertContext from '../context/alert/alertContext';
 
 const getInitialDaysOfWeek = () => ({
-  Monday: false,
-  Tuesday: false,
-  Wednesday: false,
-  Thursday: false,
-  Friday: false,
-  Saturday: false,
-  Sunday: false,
+	Monday: false,
+	Tuesday: false,
+	Wednesday: false,
+	Thursday: false,
+	Friday: false,
+	Saturday: false,
+	Sunday: false,
 });
 
 const AddHabit = () => {
 	const authContext = useContext(AuthContext);
-  const { uid } = authContext;
-  
-  const [habit, setHabit] = useState('');
+	const alertContext = useContext(AlertContext);
+	const { uid } = authContext;
+	const { setAlert } = alertContext;
+
+	const [habit, setHabit] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [daysOfWeek, setDaysOfWeek] = useState(getInitialDaysOfWeek());
 	const [selectedHabit, setSelectedHabit] = useState(null);
@@ -53,38 +56,37 @@ const AddHabit = () => {
 			console.error('Error adding habit ID to user:', error);
 		}
 	};
-const removeHabitFromUser = async (userId, habitId) => {
-	try {
-		const userDocRef = doc(db, 'users', userId);
-		await updateDoc(userDocRef, {
-			habits: arrayRemove(habitId),
-		});
-		console.log('Habit ID removed successfully from the user.');
-	} catch (error) {
-		console.error('Error removing habit ID from user:', error);
-	}
-};
+
+	const removeHabitFromUser = async (userId, habitId) => {
+		try {
+			const userDocRef = doc(db, 'users', userId);
+			await updateDoc(userDocRef, {
+				habits: arrayRemove(habitId),
+			});
+			console.log('Habit ID removed successfully from the user.');
+		} catch (error) {
+			console.error('Error removing habit ID from user:', error);
+		}
+	};
+
 	const fetchHabits = async () => {
 		try {
-			// get user -> habits array -> habits from db using this id
 			const userDocRef = doc(db, 'users', uid);
 			const userDocSnapshot = await getDoc(userDocRef);
 
 			const userData = userDocSnapshot.data();
 			const habitsArray = userData.habits || [];
-			
-			if(habitsArray.length === 0){
+
+			if (habitsArray.length === 0) {
 				setHabits([]);
 				setLoading(false);
 				return;
-			};
+			}
+
 			const habitsCollection = collection(db, 'habits');
 			const q = query(habitsCollection, where('__name__', 'in', habitsArray));
 			const habitsSnapshot = await getDocs(q);
 
-			
-			// const habitsCollection = collection(db, 'habits');
-			// const habitsSnapshot = await getDocs(habitsCollection);
 			const habitsList = habitsSnapshot.docs.map((doc) => ({
 				id: doc.id,
 				...doc.data(),
@@ -106,6 +108,14 @@ const removeHabitFromUser = async (userId, habitId) => {
 			(day) => daysOfWeek[day]
 		);
 		try {
+			if (habit.trim() === '') {
+				setAlert('Habit name cannot be empty', 'danger');
+				return;
+			}
+			if (selectedDays.length === 0) {
+				setAlert('Please select at least one day', 'danger');
+				return;
+			}
 			if (isEditMode && selectedHabit) {
 				const habitRef = doc(db, 'habits', selectedHabit.id);
 				await updateDoc(habitRef, {
@@ -125,9 +135,6 @@ const removeHabitFromUser = async (userId, habitId) => {
 					baseXp: 10,
 					multiplier: 1,
 				});
-				// add habit to current user
-				console.log("uid");
-				console.log(uid);
 				addHabitToUser(uid, newHabitRef.id);
 			}
 			resetForm();
@@ -153,7 +160,7 @@ const removeHabitFromUser = async (userId, habitId) => {
 	const handleDeleteHabit = async (habitId) => {
 		try {
 			removeHabitFromUser(uid, habitId);
-      await deleteDoc(doc(db, 'habits', habitId));
+			await deleteDoc(doc(db, 'habits', habitId));
 			fetchHabits();
 		} catch (error) {
 			console.error('Error deleting habit:', error);
@@ -272,10 +279,10 @@ const removeHabitFromUser = async (userId, habitId) => {
 						<button
 							type='submit'
 							className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'
-							disabled={
-								habit.trim() === '' ||
-								!Object.values(daysOfWeek).some((day) => day)
-							}
+							// disabled={
+							// 	habit.trim() === '' ||
+							// 	!Object.values(daysOfWeek).some((day) => day)
+							// }
 						>
 							{isEditMode ? 'Save' : 'Add Habit'}
 						</button>
@@ -291,7 +298,5 @@ const removeHabitFromUser = async (userId, habitId) => {
 		</div>
 	);
 };
-
-
 
 export default AddHabit;

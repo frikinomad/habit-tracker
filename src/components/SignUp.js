@@ -12,14 +12,15 @@ const SignUp = (props) => {
 	const { setAlert } = alertContext;
 	const { register, error, clearErrors, isAuthenticated } = authContext;
 	const navigate = useNavigate();
-	
+
 	useEffect(() => {
 		if (isAuthenticated) {
 			navigate('/');
 			// props.history.push('/');
 		}
-		if (error === 'User already exists') {
-			setAlert(error, 'danger');
+		console.log(error);
+		if (error === 'Firebase: Error (auth/email-already-in-use).') {
+			setAlert('Email already in use', 'danger');
 			clearErrors();
 		}
 		// eslint-disable-next-line
@@ -148,35 +149,5 @@ const SignUp = (props) => {
 	);
 };
 
-const styles = {
-	form: {
-		width: '100%',
-		maxWidth: '400px',
-		margin: '0 auto',
-		padding: '20px',
-		backgroundColor: '#f5f5f5',
-		borderRadius: '8px',
-		boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-	},
-	inputGroup: {
-		marginBottom: '15px',
-	},
-	input: {
-		width: '100%',
-		padding: '8px',
-		borderRadius: '4px',
-		border: '1px solid #ccc',
-	},
-	submitButton: {
-		width: '100%',
-		padding: '12px',
-		backgroundColor: '#333',
-		color: '#fff',
-		border: 'none',
-		borderRadius: '6px',
-		cursor: 'pointer',
-		fontSize: '1rem',
-	},
-};
 
 export default SignUp;

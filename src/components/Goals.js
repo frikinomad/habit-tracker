@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { getFirestore, collection, addDoc, getDocs , deleteDoc, doc } from 'firebase/firestore';
 import Spinner from './Spinner';
-
+import AlertContext from '../context/alert/alertContext';
 const GoalTracker = () => {
   const [goals, setGoals] = useState([]);
   const [newGoal, setNewGoal] = useState('');
   const [isLoading, setIsLoading] = useState(true); // New loading state
+  
+  const alertContext = useContext(AlertContext);
+  const { setAlert } = alertContext;
 
   const db = getFirestore();
 
@@ -26,6 +29,10 @@ const GoalTracker = () => {
       const newGoalDoc = await addDoc(collection(db, 'goals'), { goal: newGoal });
       setGoals([...goals, { goal: newGoal, id: newGoalDoc.id }]);
       setNewGoal('');
+    }
+    else{
+      setAlert('Goal name cannot be empty', 'danger');
+			return;
     }
   };
 

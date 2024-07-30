@@ -14,6 +14,7 @@ import HabitDetailsPage from './pages/HabitDetailsPage';
 import DashboardPage from './pages/DashboardPage';
 import Login from './components/Login';
 import PrivateRoute from './components/routing/PrivateRoute';
+import Alerts from './components/layout/Alerts';
 import NavBar from './components/NavBar';
 import AuthState from './context/auth/AuthState';
 import AlertState from './context/alert/AlertState';
@@ -24,6 +25,7 @@ const App = () => {
 			<AlertState>
 				<Router>
 					<NavBar />
+					<Alerts />
 					<Routes>
 						{/* Public Routes */}
 						<Route path='/signup' element={<SignUpPage />} />

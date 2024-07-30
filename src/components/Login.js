@@ -13,9 +13,8 @@ const Login = (props) => {
 		if (isAuthenticated) {
 			navigate('/');
 		}
-
-		if (error === 'Invalid Credentials') {
-			setAlert(error, 'danger');
+		if (error === 'Firebase: Error (auth/invalid-credential).') {
+			setAlert('Invalid Credentials', 'danger');
 			clearErrors();
 		}
 
