@@ -6,13 +6,10 @@ import {
 	addDoc,
 	query,
 	where,
-	getDoc,
 	getDocs,
 	deleteDoc,
 	doc,
 	updateDoc,
-	arrayUnion,
-	arrayRemove,
 } from 'firebase/firestore';
 import Spinner from './Spinner';
 import AuthContext from '../context/auth/authContext';
@@ -44,49 +41,11 @@ const AddHabit = () => {
 	const db = getFirestore();
 	const navigate = useNavigate();
 
-	// Function to add a habit ID to a user's habits array
-	const addHabitToUser = async (userId, habitId) => {
-		try {
-			const userDocRef = doc(db, 'users', userId);
-			await updateDoc(userDocRef, {
-				habits: arrayUnion(habitId),
-			});
-			console.log('Habit ID added successfully to the user.');
-		} catch (error) {
-			console.error('Error adding habit ID to user:', error);
-		}
-	};
-
-	const removeHabitFromUser = async (userId, habitId) => {
-		try {
-			const userDocRef = doc(db, 'users', userId);
-			await updateDoc(userDocRef, {
-				habits: arrayRemove(habitId),
-			});
-			console.log('Habit ID removed successfully from the user.');
-		} catch (error) {
-			console.error('Error removing habit ID from user:', error);
-		}
-	};
-
 	const fetchHabits = async () => {
 		try {
-			const userDocRef = doc(db, 'users', uid);
-			const userDocSnapshot = await getDoc(userDocRef);
-
-			const userData = userDocSnapshot.data();
-			const habitsArray = userData.habits || [];
-
-			if (habitsArray.length === 0) {
-				setHabits([]);
-				setLoading(false);
-				return;
-			}
-
 			const habitsCollection = collection(db, 'habits');
-			const q = query(habitsCollection, where('__name__', 'in', habitsArray));
+			const q = query(habitsCollection, where('userId', '==', uid));
 			const habitsSnapshot = await getDocs(q);
-
 			const habitsList = habitsSnapshot.docs.map((doc) => ({
 				id: doc.id,
 				...doc.data(),
@@ -123,7 +82,7 @@ const AddHabit = () => {
 					daysOfWeek: selectedDays,
 				});
 			} else {
-				const newHabitRef = await addDoc(collection(db, 'habits'), {
+				await addDoc(collection(db, 'habits'), {
 					name: habit,
 					daysOfWeek: selectedDays,
 					createdAt: new Date(),
@@ -134,8 +93,8 @@ const AddHabit = () => {
 					},
 					baseXp: 10,
 					multiplier: 1,
+					userId: uid,
 				});
-				addHabitToUser(uid, newHabitRef.id);
 			}
 			resetForm();
 			fetchHabits();
@@ -159,7 +118,6 @@ const AddHabit = () => {
 
 	const handleDeleteHabit = async (habitId) => {
 		try {
-			removeHabitFromUser(uid, habitId);
 			await deleteDoc(doc(db, 'habits', habitId));
 			fetchHabits();
 		} catch (error) {

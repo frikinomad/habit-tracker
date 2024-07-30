@@ -91,7 +91,6 @@ const AuthState = (props) => {
 				name,
 				email,
 				createdAt: new Date(),
-				habits: [],
 				xp: 0
 			});
 
