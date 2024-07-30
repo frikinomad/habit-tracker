@@ -13,6 +13,7 @@ import {
 } from 'firebase/firestore';
 import Spinner from './Spinner';
 import AuthContext from '../context/auth/authContext';
+import AlertContext from '../context/alert/alertContext';
 
 const getInitialDaysOfWeek = () => ({
 	Monday: false,
@@ -26,7 +27,9 @@ const getInitialDaysOfWeek = () => ({
 
 const AddHabit = () => {
 	const authContext = useContext(AuthContext);
+	const alertContext = useContext(AlertContext);
 	const { uid } = authContext;
+	const { setAlert } = alertContext;
 
 	const [habit, setHabit] = useState('');
 	const [loading, setLoading] = useState(true);
@@ -64,6 +67,14 @@ const AddHabit = () => {
 			(day) => daysOfWeek[day]
 		);
 		try {
+			if (habit.trim() === '') {
+				setAlert('Habit name cannot be empty', 'danger');
+				return;
+			}
+			if (selectedDays.length === 0) {
+				setAlert('Please select at least one day', 'danger');
+				return;
+			}
 			if (isEditMode && selectedHabit) {
 				const habitRef = doc(db, 'habits', selectedHabit.id);
 				await updateDoc(habitRef, {
@@ -226,10 +237,10 @@ const AddHabit = () => {
 						<button
 							type='submit'
 							className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'
-							disabled={
-								habit.trim() === '' ||
-								!Object.values(daysOfWeek).some((day) => day)
-							}
+							// disabled={
+							// 	habit.trim() === '' ||
+							// 	!Object.values(daysOfWeek).some((day) => day)
+							// }
 						>
 							{isEditMode ? 'Save' : 'Add Habit'}
 						</button>

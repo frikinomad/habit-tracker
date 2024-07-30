@@ -10,16 +10,18 @@ import {
 	where,
 } from 'firebase/firestore';
 import Spinner from './Spinner';
-import AuthContext from '../context/auth/authContext';
+import AuthContext from '../context/auth/authContext';import AlertContext from '../context/alert/alertContext';
 
 const GoalTracker = () => {
-	const authContext = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
 	const [goals, setGoals] = useState([]);
 	const [newGoal, setNewGoal] = useState('');
 	const [isLoading, setIsLoading] = useState(true);
 	const { uid } = authContext;
 	const db = getFirestore();
-
+  
+  const alertContext = useContext(AlertContext);
+  const { setAlert } = alertContext;
 	const fetchGoals = async () => {
 		const goalsCollection = collection(db, 'goals');
 		const q = query(goalsCollection, where('userId', '==', uid));
@@ -47,6 +49,10 @@ const GoalTracker = () => {
 			setGoals([...goals, { goal: newGoal, id: newGoalDoc.id }]);
 			setNewGoal('');
 		}
+    else{
+      setAlert('Goal name cannot be empty', 'danger');
+			return;
+    }
 	};
 
 	const handleDeleteGoal = async (goalId) => {
