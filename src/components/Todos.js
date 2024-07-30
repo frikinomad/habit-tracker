@@ -23,7 +23,6 @@ const Todos = () => {
 	const { uid } = authContext;
 	const db = getFirestore();
 
-
 	const updateUserXp = async (userId, habitData, isCompleted) => {
 		const resultXp = habitData.baseXp * habitData.multiplier;
 
@@ -51,7 +50,6 @@ const Todos = () => {
 	// Function to update habit history in Firestore and local state
 	const updateHabitHistory = async (habitId, isCompleted) => {
 		try {
-			
 			const habitRef = doc(db, 'habits', habitId);
 			const habitDoc = await getDoc(habitRef);
 			const habitData = habitDoc.data();
@@ -99,19 +97,9 @@ const Todos = () => {
 
 	const fetchHabits = async (date) => {
 		setLoading(true);
-		const userDocRef = doc(db, 'users', uid);
-		const userDocSnapshot = await getDoc(userDocRef);
 
-		const userData = userDocSnapshot.data();
-		const habitsArray = userData.habits || [];
-
-		if (habitsArray.length === 0) {
-			setHabits([]);
-			setLoading(false);
-			return;
-		}
 		const habitsCollection = collection(db, 'habits');
-		const q = query(habitsCollection, where('__name__', 'in', habitsArray));
+		const q = query(habitsCollection, where('userId', '==', uid));
 		const habitsSnapshot = await getDocs(q);
 
 		const habitsList = habitsSnapshot.docs.map((doc) => ({
