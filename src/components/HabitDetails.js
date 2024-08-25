@@ -96,24 +96,25 @@ const HabitDetails = () => {
     <Spinner />
   ) : (
     <div className="container mx-auto p-4 dark:bg-gray-900 dark:text-white">
-      <div className="bg-white shadow-md rounded-lg p-4 mb-4 text-center dark:bg-gray-800">
+      <div className="bg-gray-800 shadow-md rounded-lg p-4 mb-4 text-center">
         {isEditMode ? (
           <input
             type="text"
             name="name"
             value={habit.name}
             onChange={handleInputChange}
-            className="border border-gray-300 rounded-lg p-2 w-full mb-4 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+            className="border border-gray-700 rounded-lg p-2 w-full mb-4 dark:bg-gray-700 dark:text-white"
+            placeholder="Habit Name"
           />
         ) : (
-          <h3 className="text-gray-800 font-bold text-lg dark:text-white">{habit.name}</h3>
+          <h3 className="text-white font-bold text-lg">{habit.name}</h3>
         )}
         <div className="mt-4 flex justify-center space-x-2">
           {habit.daysOfWeek && Object.keys(daysOfWeek).map((day, index) => (
             <div
               key={index}
               className={`h-8 w-8 flex items-center justify-center rounded-full ${
-                daysOfWeek[day] ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-700 dark:text-white'
+                daysOfWeek[day] ? 'bg-green-500 text-white' : 'bg-gray-700 text-white'
               }`}
               onClick={() => handleDayChange(day)}
             >
@@ -146,23 +147,25 @@ const HabitDetails = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         {['reason', 'motivation', 'opportunityCost', 'whyPause'].map((field) => (
-          <div key={field} className="bg-white shadow-md rounded-lg p-4 dark:bg-gray-800">
-            <h4 className="text-gray-800 font-bold text-lg capitalize dark:text-white">{field}</h4>
+          <div key={field} className="bg-gray-800 shadow-md rounded-lg p-4">
+            <h4 className="text-white font-bold text-lg capitalize">{field}</h4>
             {isEditMode ? (
               <textarea
                 name={field}
                 value={habit[field] || ' '}
                 onChange={handleInputChange}
-                className="border border-gray-300 rounded-lg p-2 w-full mt-2 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+                className="border border-gray-700 rounded-lg p-2 w-full mt-2 dark:bg-gray-700 dark:text-white"
+                placeholder={field}
               />
             ) : (
-              <p className="text-gray-600 mt-2 dark:text-gray-300">{habit[field]}</p>
+              <p className="text-gray-300 mt-2">{habit[field]}</p>
             )}
           </div>
         ))}
       </div>
     </div>
   );
+  
   
 };
 

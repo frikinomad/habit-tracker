@@ -88,7 +88,7 @@ const Dashboard = () => {
       <div className="spinner"></div>
     </div>
   ) : (
-    <div className="container mx-auto p-4 dark:bg-gray-900 dark:text-white">
+    <div className="flex justify-center items-center h-screen dark:bg-gray-900">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Habit Dashboard</h2>
         <select

@@ -6,7 +6,7 @@ import { auth } from '../index';
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-//   const auth = getAuth();
+  //  const auth = getAuth();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -19,64 +19,54 @@ const SignUp = () => {
       });
   };
 
-return (
-  <form style={styles.form} onSubmit={handleSignUp}>
-    <div style={styles.inputGroup}>
-      <label htmlFor="email">Email</label>
-      <input
-        type="email"
-        id="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={styles.input}
-        placeholder="Email"
-      />
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
+      <form
+        onSubmit={handleSignUp}
+        className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 w-full max-w-sm"
+      >
+        <div className="mb-4">
+          <label
+            htmlFor="email"
+            className="block text-gray-700 dark:text-gray-300 font-bold mb-2"
+          >
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+            placeholder="Email"
+          />
+        </div>
+        <div className="mb-6">
+          <label
+            htmlFor="password"
+            className="block text-gray-700 dark:text-gray-300 font-bold mb-2"
+          >
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+            placeholder="Password (6 digits)"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-800"
+        >
+          Sign Up
+        </button>
+      </form>
     </div>
-    <div style={styles.inputGroup}>
-      <label htmlFor="password">Password</label>
-      <input
-        type="password"
-        id="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={styles.input}
-        placeholder="Password (6 Digits)"
-      />
-    </div>
-    <button type="submit" style={styles.submitButton}>Sign Up</button>
-  </form>
-);
-};
-
-const styles = {
-form: {
-  width: '100%',
-  maxWidth: '400px',
-  margin: '0 auto',
-  padding: '20px',
-  backgroundColor: '#f5f5f5',
-  borderRadius: '8px',
-  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-},
-inputGroup: {
-  marginBottom: '15px',
-},
-input: {
-  width: '100%',
-  padding: '8px',
-  borderRadius: '4px',
-  border: '1px solid #ccc',
-},
-submitButton: {
-  width: '100%',
-  padding: '12px',
-  backgroundColor: '#333',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '6px',
-  cursor: 'pointer',
-  fontSize: '1rem',
-},
+  );
+  
 };
 
 export default SignUp;

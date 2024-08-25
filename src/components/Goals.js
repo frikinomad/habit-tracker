@@ -38,34 +38,34 @@ const GoalTracker = () => {
       }
   }
   return (
-    <div className="container mx-auto p-4 dark:bg-gray-900 dark:text-white">
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        goals.map((goal) => (
-          <div key={goal.id} className="bg-white shadow-md rounded-lg p-4 mb-4 dark:bg-gray-800 dark:text-white">
-            {goal.goal}
-          </div>
-        ))
-      )}
-      <div className="flex items-center space-x-4 mt-4">
-        <input
-          type="text"
-          value={newGoal}
-          onChange={(e) => setNewGoal(e.target.value)}
-          placeholder="Enter a new goal"
-          className="border border-gray-300 rounded-lg p-2 w-full dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-        />
-        <button
-          onClick={handleAddGoal}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Add Goal
-        </button>
-      </div>
+  <div className="container mx-auto p-4 dark:bg-gray-900 dark:text-white">
+    {isLoading ? (
+      <Spinner />
+    ) : (
+      goals.map((goal) => (
+        <div key={goal.id} className="bg-white shadow-md rounded-lg p-4 mb-4 dark:bg-gray-800 dark:text-white">
+          {goal.goal}
+        </div>
+      ))
+    )}
+    <div className="flex items-center space-x-4 mt-4">
+      <input
+        type="text"
+        value={newGoal}
+        onChange={(e) => setNewGoal(e.target.value)}
+        placeholder="Enter a new goal"
+        className="border border-gray-300 rounded-lg p-2 w-full dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+      />
+      <button
+        onClick={handleAddGoal}
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Add Goal
+      </button>
     </div>
-  );
-  
+  </div>
+);
+
 };  
 
 export default GoalTracker;
