@@ -84,37 +84,38 @@ const Dashboard = () => {
   };
 
   return loading ? (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen dark:bg-gray-900">
       <div className="spinner"></div>
     </div>
   ) : (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 dark:bg-gray-900 dark:text-white">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Habit Dashboard</h2>
         <select
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}
-          className="border border-gray-300 rounded p-2"
+          className="border border-gray-300 dark:border-gray-700 rounded p-2 dark:bg-gray-800 dark:text-white"
         >
           <option value="week">Week</option>
           <option value="month">Month</option>
           <option value="year">Year</option>
         </select>
       </div>
-
+  
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white shadow-md rounded-lg p-4 h-96">
+        <div className="bg-white shadow-md rounded-lg p-4 h-96 dark:bg-gray-800">
           <h3 className="text-xl font-bold mb-4">Habit Completion</h3>
           <Line data={getChartData()} options={chartOptions} />
         </div>
-
-        <div className="bg-white shadow-md rounded-lg p-4 h-96">
+  
+        <div className="bg-white shadow-md rounded-lg p-4 h-96 dark:bg-gray-800">
           <h3 className="text-xl font-bold mb-4">Total XP</h3>
           <Bar data={getXPData()} options={chartOptions} />
         </div>
       </div>
     </div>
   );
+  
 };
 
 export default Dashboard;

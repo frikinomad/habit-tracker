@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import ThemeBtn from './ThemeBtn';
 
 const NavBar = () => {
   const location = useLocation();
@@ -34,6 +35,9 @@ const NavBar = () => {
         </li>
         <li>
           <Link to="/signup" className={getLinkClass('/signup')}>Sign Up</Link>
+        </li>
+        <li>
+          <ThemeBtn />
         </li>
       </ul>
     </nav>
