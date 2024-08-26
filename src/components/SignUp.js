@@ -20,15 +20,15 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800">
       <form
         onSubmit={handleSignUp}
-        className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 w-full max-w-sm"
+        className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8 w-full max-w-sm transition-transform transform hover:scale-105"
       >
-        <div className="mb-4">
+        <div className="mb-6">
           <label
             htmlFor="email"
-            className="block text-gray-700 dark:text-gray-300 font-bold mb-2"
+            className="block text-gray-800 dark:text-gray-200 font-semibold mb-2"
           >
             Email
           </label>
@@ -37,14 +37,14 @@ const SignUp = () => {
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+            className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             placeholder="Email"
           />
         </div>
         <div className="mb-6">
           <label
             htmlFor="password"
-            className="block text-gray-700 dark:text-gray-300 font-bold mb-2"
+            className="block text-gray-800 dark:text-gray-200 font-semibold mb-2"
           >
             Password
           </label>
@@ -53,19 +53,20 @@ const SignUp = () => {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"
+            className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             placeholder="Password (6 digits)"
           />
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-800"
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors"
         >
           Sign Up
         </button>
       </form>
     </div>
   );
+  
   
 };
 

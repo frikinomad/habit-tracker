@@ -42,28 +42,32 @@ const AddHabit = () => {
   return loading ? (
     <Spinner />
   ) : (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="min-h-screen bg-gradient-to-br from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center py-10 px-4">
+      <h1 className="text-3xl font-bold mb-10 text-gray-800 dark:text-white">
+        My Habits
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-screen-lg">
         {habits.map((habit) => (
           <div
             key={habit.id}
-            className="bg-white shadow-md rounded-lg p-4 mb-4 dark:bg-gray-800 dark:text-white"
+            className="bg-white dark:bg-gray-700 rounded-2xl shadow-md p-6 transform transition-transform hover:scale-105"
           >
-            <div className="flex justify-between items-center">
-              <div>
-                <span
-                  className="font-bold text-lg cursor-pointer dark:text-white"
-                  onClick={() => handleHabitClick(habit.id)}
-                >
-                  {habit.name}
-                </span>
-              </div>
+            <div className="flex justify-between items-center mb-4">
+              <span
+                className="text-xl font-semibold cursor-pointer text-gray-800 dark:text-white"
+                onClick={() => handleHabitClick(habit.id)}
+              >
+                {habit.name}
+              </span>
+              <button className="text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 transition-colors">
+                Edit
+              </button>
             </div>
-            <div className="mt-4 flex justify-center space-x-2">
+            <div className="flex justify-around mt-4">
               {habit.daysOfWeek.map((day, index) => (
                 <div
                   key={index}
-                  className="h-8 w-8 flex items-center justify-center bg-green-300 rounded-full dark:bg-green-500 dark:text-white"
+                  className="h-10 w-10 flex items-center justify-center bg-blue-50 dark:bg-blue-600 rounded-full text-blue-600 dark:text-white font-medium"
                 >
                   {day.slice(0, 1).toUpperCase()}
                 </div>
@@ -74,6 +78,8 @@ const AddHabit = () => {
       </div>
     </div>
   );
+  
+  
   
 };
 

@@ -110,7 +110,7 @@ const Todos = () => {
   }, [selectedDate]); // Fetch habits whenever the selected date changes
 
   return (
-    <div className="container mx-auto p-4 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center p-6">
       <DatePicker
         selected={selectedDate}
         onChange={(date) => {
@@ -118,36 +118,46 @@ const Todos = () => {
           setSelectedDate(date);
         }}
         inline
-        className="mb-4 dark:bg-gray-800 dark:text-white"
+        className="bg-gray-800 border border-gray-700 rounded-lg shadow-lg mb-6 dark:text-gray-100"
       />
       {loading ? (
         <Spinner />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {habits.map((habit) => (
-            <div key={habit.id} 
-              className={`bg-white shadow-md rounded-lg p-4 mb-4 ${habit.completed ? "bg-gray-300 dark:bg-gray-700" : "bg-white dark:bg-gray-800"} dark:text-white`}
-              style={habit.style}>
-              <h3 className={habit.completed ? "text-green-500 line-through dark:text-green-400" : "text-gray-800 dark:text-white"}>
+            <div
+              key={habit.id}
+              className={`relative bg-gray-800 shadow-lg rounded-lg p-6 transition-transform transform hover:scale-105 ${habit.completed ? "bg-gray-700" : "bg-gray-800"} dark:text-gray-100`}
+              style={habit.style}
+            >
+              <h3 className={`text-xl font-semibold mb-4 ${habit.completed ? "text-green-400 line-through" : "text-gray-100"}`}>
                 {habit.name}
               </h3>
-              <div className="mt-4 flex justify-center space-x-2">
+              <div className="mt-4 flex justify-center space-x-3">
                 {habit.daysOfWeek.map((day, index) => (
                   <div
                     key={index}
-                    className="h-8 w-8 flex items-center justify-center bg-gray-200 dark:bg-gray-600 rounded-full dark:text-white"
+                    className={`h-10 w-10 flex items-center justify-center rounded-full text-lg font-medium transition-colors ${habit.completed ? 'bg-gray-600' : 'bg-gray-500'} dark:bg-gray-700 dark:text-gray-100`}
                   >
                     {day.slice(0, 1).toUpperCase()}
                   </div>
                 ))}
               </div>
-              <input type="checkbox" checked={habit.completed} className="form-checkbox h-5 w-5 mt-4 dark:bg-gray-700 dark:border-gray-600" readOnly />
+              <div className="absolute top-4 right-4">
+                <input
+                  type="checkbox"
+                  checked={habit.completed}
+                  className="form-checkbox h-6 w-6 text-green-500 dark:bg-gray-700 dark:border-gray-600"
+                  readOnly
+                />
+              </div>
             </div>
           ))}
         </div>
       )}
     </div>
-  );  
+  );
+      
 };  
 
 export default Todos;

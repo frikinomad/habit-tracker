@@ -38,33 +38,42 @@ const GoalTracker = () => {
       }
   }
   return (
-  <div className="container mx-auto p-4 dark:bg-gray-900 dark:text-white">
-    {isLoading ? (
-      <Spinner />
-    ) : (
-      goals.map((goal) => (
-        <div key={goal.id} className="bg-white shadow-md rounded-lg p-4 mb-4 dark:bg-gray-800 dark:text-white">
-          {goal.goal}
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 py-10 px-4">
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <div className="w-full max-w-xl space-y-6">
+          {goals.map((goal) => (
+            <div
+              key={goal.id}
+              className="bg-white dark:bg-gray-700 rounded-2xl shadow-md p-6 transition-transform transform hover:scale-105"
+            >
+              <span className="text-lg font-semibold text-gray-800 dark:text-white">
+                {goal.goal}
+              </span>
+            </div>
+          ))}
         </div>
-      ))
-    )}
-    <div className="flex items-center space-x-4 mt-4">
-      <input
-        type="text"
-        value={newGoal}
-        onChange={(e) => setNewGoal(e.target.value)}
-        placeholder="Enter a new goal"
-        className="border border-gray-300 rounded-lg p-2 w-full dark:border-gray-700 dark:bg-gray-700 dark:text-white"
-      />
-      <button
-        onClick={handleAddGoal}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Add Goal
-      </button>
+      )}
+  
+      <div className="w-full max-w-xl flex items-center space-x-4 mt-6">
+        <input
+          type="text"
+          value={newGoal}
+          onChange={(e) => setNewGoal(e.target.value)}
+          placeholder="Enter a new goal"
+          className="flex-1 border border-gray-300 dark:border-gray-600 rounded-xl p-4 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+        />
+        <button
+          onClick={handleAddGoal}
+          className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-colors"
+        >
+          Add Goal
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+  
 
 };  
 
