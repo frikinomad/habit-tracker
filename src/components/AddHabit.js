@@ -43,9 +43,6 @@ const AddHabit = () => {
     <Spinner />
   ) : (
     <div className="min-h-screen bg-gradient-to-br from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 flex flex-col items-center py-10 px-4">
-      <h1 className="text-3xl font-bold mb-10 text-gray-800 dark:text-white">
-        My Habits
-      </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-screen-lg">
         {habits.map((habit) => (
           <div
@@ -59,9 +56,6 @@ const AddHabit = () => {
               >
                 {habit.name}
               </span>
-              <button className="text-gray-400 dark:text-gray-300 hover:text-gray-600 dark:hover:text-gray-100 transition-colors">
-                Edit
-              </button>
             </div>
             <div className="flex justify-around mt-4">
               {habit.daysOfWeek.map((day, index) => (

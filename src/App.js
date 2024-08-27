@@ -1,5 +1,3 @@
-import './App.css';
-
 import {React, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
@@ -8,6 +6,7 @@ import Login from './components/Login';
 import AddHabit from './components/AddHabit';
 import Goals from './components/Goals';
 import Todos from './components/Todos';
+import Test from './components/test';
 import HabitDetails from './components/HabitDetails';
 import Dashboard from './components/Dashboard';
 
@@ -41,6 +40,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/today" element={<Todos />} /> 
+            <Route path="/test" element={<Test />} /> 
             <Route path="/habits" element={<AddHabit />} />
             <Route path="/habits/:id" element={<HabitDetails />} /> 
             <Route path="/login" element={<Login />} />

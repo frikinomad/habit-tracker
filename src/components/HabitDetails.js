@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // import useNavigate
 import { getFirestore, doc, getDoc, deleteDoc, updateDoc } from 'firebase/firestore';
 import Spinner from './Spinner';
 
@@ -15,6 +15,7 @@ const getInitialDaysOfWeek = () => ({
 
 const HabitDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate(); // initialize useNavigate
   const [habit, setHabit] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -67,7 +68,7 @@ const HabitDetails = () => {
   const handleDeleteHabit = async (habitId) => {
     try {
       await deleteDoc(doc(db, 'habits', habitId));
-      fetchHabit();
+      navigate('/habits'); // navigate back to the habits page after deletion
     } catch (error) {
       console.error('Error deleting habit:', error);
     }
@@ -167,10 +168,6 @@ const HabitDetails = () => {
       </div>
     </div>
   );
-  
-  
-  
-  
 };
 
 export default HabitDetails;

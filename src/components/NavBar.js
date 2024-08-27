@@ -51,6 +51,11 @@ const NavBar = () => {
               Today
             </Link>
           </li>
+          <li>
+            <Link to="/test" className={`${getLinkClass('/test')} text-gray-200 hover:text-gray-400`}>
+              Test
+            </Link>
+          </li>
           {user ? (
             <li className="text-gray-200 font-bold">
               {user.username.toUpperCase()}
