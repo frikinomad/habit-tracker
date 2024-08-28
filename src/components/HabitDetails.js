@@ -51,14 +51,16 @@ const HabitDetails = () => {
     const selectedDays = Object.keys(daysOfWeek).filter((day) => daysOfWeek[day]);
     try {
       const habitRef = doc(db, 'habits', habit.id);
-      await updateDoc(habitRef, {
-        name: habit.name,
-        daysOfWeek: selectedDays,
-        reason: habit.reason,
-        motivation: habit.motivation,
-        opportunityCost: habit.opportunityCost,
-        whyPause: habit.whyPause,
-      });
+      
+      const updateData = {};
+      if (habit.name) updateData.name = habit.name;
+      if (selectedDays) updateData.daysOfWeek = selectedDays;
+      if (habit.reason) updateData.reason = habit.reason;
+      if (habit.motivation) updateData.motivation = habit.motivation;
+      if (habit.opportunityCost) updateData.opportunityCost = habit.opportunityCost;
+      if (habit.whyPause) updateData.whyPause = habit.whyPause;
+
+      await updateDoc(habitRef, updateData);
       setIsEditMode(false);
     } catch (error) {
       console.error('Error saving habit:', error);

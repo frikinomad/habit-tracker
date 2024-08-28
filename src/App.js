@@ -6,7 +6,7 @@ import Login from './components/Login';
 import AddHabit from './components/AddHabit';
 import Goals from './components/Goals';
 import Todos from './components/Todos';
-import Test from './components/test';
+import Test from './components/Test';
 import HabitDetails from './components/HabitDetails';
 import Dashboard from './components/Dashboard';
 
