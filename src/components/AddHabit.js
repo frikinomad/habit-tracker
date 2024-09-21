@@ -148,77 +148,71 @@ const AddHabit = () => {
 		<Spinner />
 	) : (
 		<div className='container mx-auto p-4'>
-			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
 				{habits.map((habit) => (
 					<div
 						key={habit.id}
-						className='bg-white shadow-md rounded-lg p-4 mb-4'
+						className='card-shadow rounded-2xl h-96 border card-border-color overflow-hidden flex flex-col relative text-color card-background-color'
 					>
-						<div className='flex justify-between items-center'>
-							<div>
-								{isEditMode &&
-								selectedHabit &&
-								selectedHabit.id === habit.id ? (
-									<input
-										type='text'
-										value={habit.name}
-										onChange={(e) => setHabit(e.target.value)}
-										className='border border-gray-300 rounded-lg p-2 w-full'
-									/>
-								) : (
-									<span
-										className='font-bold text-lg'
-										onClick={() => handleHabitClick(habit.id)}
-									>
-										{habit.name}
-									</span>
-								)}
+						<div className='p-4 sticky top-0 z-10'>
+							<div className='flex items-center gap-1.5'>
+								<div className='font-bold text-lg'>{habit.name}</div>
 							</div>
-							<div className='flex space-x-2'>
+						</div>
+
+						{/* Blurred background elements */}
+						<div
+							className='absolute -top-4 -left-16 -translate-y-1/2 rounded-full w-96 h-96 blur-3xl mix-blend-multiply opacity-50 bg-[#BFE0E2]'
+							style={{ top: '24rem', left: '-14rem' }}
+						></div>
+						<div className='absolute -top-48 left-1/2 -translate-x-1/2 rounded-full w-96 h-96 blur-3xl mix-blend-multiply bg-[#5FAAB1]'></div>
+
+						<div className='absolute top-36 left-6 flex flex-col justify-between h-1/2'>
+							<div className='flex flex-col items-center space-y-2'>
 								<button
 									onClick={() => handleEditHabit(habit)}
-									className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+									className='text-white hover:text-blue-300 transition-colors'
 								>
-									Edit
+									<i className='fas fa-pencil-alt'></i>
 								</button>
 								<button
 									onClick={() => handleDeleteHabit(habit.id)}
-									className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'
+									className='text-white hover:text-red-300 transition-colors'
 								>
-									Delete
+									<i className='fas fa-trash'></i>
 								</button>
 							</div>
-						</div>
-						<div className='mt-4 flex justify-center space-x-2'>
-							{habit.daysOfWeek.map((day, index) => (
-								<div
-									key={index}
-									className='h-8 w-8 flex items-center justify-center bg-gray-200 rounded-full'
-								>
-									{day.slice(0, 1).toUpperCase()}
-								</div>
-							))}
+							<div className='mt-4 flex justify-center space-x-2'>
+								{habit.daysOfWeek.map((day, index) => (
+									<div
+										key={index}
+										className='h-8 w-8 flex items-center justify-center bg-gray-200 rounded-full text-black'
+									>
+										{day.slice(0, 1).toUpperCase()}
+									</div>
+								))}
+							</div>
 						</div>
 					</div>
 				))}
 			</div>
 			<button
 				onClick={() => setShowForm((prev) => !prev)}
-				className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-4'
+				className='bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-4 rounded mt-4'
 			>
 				Add Habit
 			</button>
 			{showForm && (
 				<form
 					onSubmit={handleAddOrUpdateHabit}
-					className='mt-4 bg-white shadow-md rounded-lg p-4'
+					className='mt-4 bg-white shadow-md rounded-lg p-6'
 				>
 					<input
 						type='text'
 						value={habit}
 						onChange={(e) => setHabit(e.target.value)}
 						placeholder={isEditMode ? 'Edit Habit' : 'New Habit'}
-						className='border border-gray-300 rounded-lg p-2 w-full mb-4'
+						className='border border-gray-300 rounded-lg p-2 w-full mb-4 text-black'
 					/>
 					<div className='grid grid-cols-2 gap-4 mb-4'>
 						{Object.keys(daysOfWeek).map((day) => (
@@ -229,7 +223,7 @@ const AddHabit = () => {
 									onChange={() => handleDayChange(day)}
 									className='form-checkbox h-5 w-5'
 								/>
-								<span>{day.slice(0, 3)}</span>
+								<span className='text-black'>{day.slice(0, 3)}</span>
 							</label>
 						))}
 					</div>
@@ -237,10 +231,10 @@ const AddHabit = () => {
 						<button
 							type='submit'
 							className='bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded'
-							// disabled={
-							// 	habit.trim() === '' ||
-							// 	!Object.values(daysOfWeek).some((day) => day)
-							// }
+							disabled={
+								habit.trim() === '' ||
+								!Object.values(daysOfWeek).some((day) => day)
+							}
 						>
 							{isEditMode ? 'Save' : 'Add Habit'}
 						</button>

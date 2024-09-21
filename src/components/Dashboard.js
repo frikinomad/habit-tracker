@@ -1,120 +1,174 @@
-import React, { useEffect, useState } from 'react';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { Line, Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, registerables } from 'chart.js';
-import 'tailwindcss/tailwind.css';
-
-ChartJS.register(...registerables);
+import React, { useState, useEffect, useContext } from 'react';
+import {
+	collection,
+	query,
+	where,
+	getDocs,
+	getFirestore,
+	doc,
+	updateDoc,
+} from 'firebase/firestore';
+import AuthContext from '../context/auth/authContext';
+import HabitPerformanceGraph from './HabitPerformanceGraph';
+import MiniHabitGraph from './MiniHabitGraph';
+import Spinner from './Spinner';
 
 const Dashboard = () => {
-  const [habits, setHabits] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState('week');
+	const authContext = useContext(AuthContext);
+	const { uid } = authContext;
+	const [habits, setHabits] = useState([]);
+	const [loading, setLoading] = useState(true);
 
-  const db = getFirestore();
+	const db = getFirestore();
 
-  const fetchHabits = async () => {
-    try {
-      const habitsCollection = collection(db, 'habits');
-      const habitsSnapshot = await getDocs(habitsCollection);
-      const habitsList = habitsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setHabits(habitsList);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching habits:', error);
-    }
-  };
+	useEffect(() => {
+		fetchHabits();
+	}, []);
 
-  useEffect(() => {
-    fetchHabits();
-  }, []);
+	const fetchHabits = async () => {
+		try {
+			const habitsRef = collection(db, 'habits');
+			const q = query(habitsRef, where('userId', '==', uid));
+			const querySnapshot = await getDocs(q);
+			const habitsData = querySnapshot.docs.map((doc) => {
+				const data = doc.data();
+				const history = data.history || {};
+				const oldestDate =
+					Object.keys(history).sort()[0] ||
+					data.createdAt.toDate().toISOString().split('T')[0];
 
-  const getChartData = () => {
-    const labels = [];
-    const datasets = [];
+				return {
+					id: doc.id,
+					...data,
+					createdAt: oldestDate,
+					streak: calculateStreak(history),
+				};
+			});
+			console.log(habitsData);
+			setHabits(habitsData);
+			setLoading(false);
+		} catch (error) {
+			console.error('Error fetching habits:', error);
+			setLoading(false);
+		}
+	};
 
-    for (let i = 1; i <= 7; i++) {
-      labels.push(`2024-07-0${i}`);
-    }
+	const markHabitAsCompleted = async (habitId) => {
+		try {
+			const habitRef = doc(db, 'habits', habitId);
+			const today = new Date().toISOString().split('T')[0];
 
-    habits.forEach((habit) => {
-      const data = [];
-      for (let i = 1; i <= 7; i++) {
-        const date = `2024-07-0${i}`;
-        data.push(habit.completion && habit.completion[date] ? 1 : 0);
-      }
+			await updateDoc(habitRef, {
+				[`history.${today}.actionPerformed`]: 'finished',
+			});
 
-      datasets.push({
-        label: habit.name,
-        data,
-        borderColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-        backgroundColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
-        fill: false,
-      });
-    });
+			// Refresh habits after marking as completed
+			await fetchHabits();
+		} catch (error) {
+			console.error('Error marking habit as completed:', error);
+			// Implement user feedback here (e.g., show an error message)
+		}
+	};
 
-    return { labels, datasets };
-  };
+	const calculateStreak = (history) => {
+		let streak = 0;
+		const dates = Object.keys(history).sort();
+		const today = new Date().toISOString().split('T')[0];
 
-  const getXPData = () => {
-    const labels = habits.map(habit => habit.name);
-    const data = habits.map(habit => habit.xp || 0);
+		for (let i = dates.length - 1; i >= 0; i--) {
+			if (dates[i] > today) continue;
+			if (history[dates[i]].actionPerformed === 'finished') {
+				streak++;
+			} else {
+				// break;
+				streak = 0;
+			}
+		}
 
-    return {
-      labels,
-      datasets: [{
-        label: 'XP',
-        data,
-        backgroundColor: labels.map(() => `#${Math.floor(Math.random() * 16777215).toString(16)}`),
-      }]
-    };
-  };
+		return streak;
+	};
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: true,
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          stepSize: 5,
-        },
-      },
-    },
-  };
+	const getStreakColor = (streak) => {
+		if (streak >= 30) return 'bg-green-500';
+		if (streak >= 14) return 'bg-yellow-500';
+		if (streak >= 7) return 'bg-orange-500';
+		return 'bg-red-500';
+	};
 
-  return loading ? (
-    <div className="flex justify-center items-center h-screen">
-      <div className="spinner"></div>
-    </div>
-  ) : (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Habit Dashboard</h2>
-        <select
-          value={timeRange}
-          onChange={(e) => setTimeRange(e.target.value)}
-          className="border border-gray-300 rounded p-2"
-        >
-          <option value="week">Week</option>
-          <option value="month">Month</option>
-          <option value="year">Year</option>
-        </select>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white shadow-md rounded-lg p-4 h-96">
-          <h3 className="text-xl font-bold mb-4">Habit Completion</h3>
-          <Line data={getChartData()} options={chartOptions} />
-        </div>
-
-        <div className="bg-white shadow-md rounded-lg p-4 h-96">
-          <h3 className="text-xl font-bold mb-4">Total XP</h3>
-          <Bar data={getXPData()} options={chartOptions} />
-        </div>
-      </div>
-    </div>
-  );
+	// return (
+	// 	<div className='container mx-auto px-4 py-8'>
+	// 		<h1 className='text-3xl font-bold mb-6'>Habit Dashboard</h1>
+	// 		{loading ? (
+	// 			<p className='text-gray-600'>Loading habits...</p>
+	// 		) : (
+	// 			<>
+	// 				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
+	// 					{habits.map((habit) => (
+	// 						<div key={habit.id} className='bg-white rounded-lg shadow-md p-6'>
+	// 							<h2 className='text-xl font-semibold mb-2'>{habit.name}</h2>
+	// 							<div className='flex items-center mb-4'>
+	// 								<div
+	// 									className={`w-12 h-12 rounded-full ${getStreakColor(
+	// 										habit.streak
+	// 									)} flex items-center justify-center text-white font-bold text-lg mr-4`}
+	// 								>
+	// 									{habit.streak}
+	// 								</div>
+	// 								<span className='text-gray-600'>day streak</span>
+	// 							</div>
+	// 							<button
+	// 								onClick={() => markHabitAsCompleted(habit.id)}
+	// 								className='bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded'
+	// 							>
+	// 								Mark as Completed
+	// 							</button>
+	// 						</div>
+	// 					))}
+	// 				</div>
+	// 				<HabitPerformanceGraph habits={habits} />
+	// 			</>
+	// 		)}
+	// 	</div>
+	// );
+	 return (
+			<div className='container mx-auto px-4 py-8'>
+				<h1 className='text-3xl font-bold mb-6'>Habit Dashboard</h1>
+				{loading ? (
+					<Spinner />
+				) : (
+					<>
+						<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
+							{habits.map((habit) => (
+								<div
+									key={habit.id}
+									className='bg-white rounded-lg shadow-md p-6'
+								>
+									<h2 className='text-xl font-semibold mb-2'>{habit.name}</h2>
+									<div className='flex items-center mb-4'>
+										<div
+											className={`w-12 h-12 rounded-full ${getStreakColor(
+												habit.streak
+											)} flex items-center justify-center text-white font-bold text-lg mr-4`}
+										>
+											{habit.streak}
+										</div>
+										<span className='text-gray-600'>day streak</span>
+									</div>
+									<MiniHabitGraph history={habit.history} />
+									<button
+										onClick={() => markHabitAsCompleted(habit.id)}
+										className='bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4'
+									>
+										Mark as Completed
+									</button>
+								</div>
+							))}
+						</div>
+						<HabitPerformanceGraph habits={habits} />
+					</>
+				)}
+			</div>
+		);
 };
 
 export default Dashboard;

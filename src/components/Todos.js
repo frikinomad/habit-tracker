@@ -14,6 +14,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
 import AuthContext from '../context/auth/authContext';
+import MiniHabitGraph from './MiniHabitGraph';
 
 const Todos = () => {
 	const authContext = useContext(AuthContext);
@@ -193,6 +194,15 @@ const Todos = () => {
 							readOnly
 							onClick={() => handleCheckboxChange(habit.id)}
 						/>
+						
+							<MiniHabitGraph history={habit.history} />
+							{/* <button
+								onClick={() => markHabitAsCompleted(habit.id)}
+								className='bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-4'
+							>
+								Mark as Completed
+							</button> */}
+						
 					</div>
 				))
 			)}
